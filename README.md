@@ -1,5 +1,7 @@
 ## Insights Feature
 
+**🎉 [Click here to preview the working implementation!](PREVIEW.md)**
+
 The Insights feature provides analytics on your journal entries to help you track patterns, moods, and productivity over time.
 
 ### What Insights Show You
