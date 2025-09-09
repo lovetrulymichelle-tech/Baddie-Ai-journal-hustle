@@ -1,4 +1,28 @@
-## Insights Feature
+# Baddie AI Journal Hustle 👑
+
+**Transform your life with AI-powered journaling - the smart platform that turns your thoughts into actionable insights.**
+
+🌐 **[View Live Landing Page](./index.html)** | 📊 **Smart Analytics** | 🔥 **Streak Tracking** | 🎯 **Goal Setting**
+
+## 🚀 Landing Page
+
+Our beautiful, responsive landing page showcases the power of Baddie AI Journal Hustle:
+
+- **Modern Design**: Clean, gradient-based UI with smooth animations
+- **Responsive Layout**: Optimized for desktop, tablet, and mobile devices
+- **Interactive Elements**: Engaging hover effects and button animations
+- **Brand Identity**: Custom logo and consistent visual design
+- **Call-to-Actions**: Strategic placement to drive user engagement
+
+### Features Highlighted:
+- 📊 Smart Analytics & Insights
+- 🔥 Streak Tracking & Motivation
+- 🎯 AI-Powered Goal Recommendations
+- 🏷️ Intelligent Tag Classification
+- 📱 Mobile-First Responsive Design
+- 🔒 Privacy & Security Focus
+
+## 💡 Insights Feature
 
 The Insights feature provides analytics on your journal entries to help you track patterns, moods, and productivity over time.
 
@@ -44,3 +68,37 @@ print(f"Top tags: {helper.get_top_tags(5)}")
 ---
 
 For questions, feedback, or to suggest new insights, open an issue or contact support.
+
+## 🏗️ Project Structure
+
+```
+Baddie-Ai-journal-hustle/
+├── index.html          # Main landing page
+├── styles.css          # CSS styles and responsive design
+├── script.js           # JavaScript for interactivity
+├── assets/
+│   └── logo.svg        # Brand logo
+├── issues/             # Project issues and documentation
+└── README.md           # This file
+```
+
+## 🔧 Development
+
+To run the landing page locally:
+
+1. Clone the repository
+2. Open `index.html` in your browser, or
+3. Run a local server: `python3 -m http.server 8000`
+4. Navigate to `http://localhost:8000`
+
+## 🎨 Design Features
+
+- **Color Scheme**: Purple gradient (#667eea to #764ba2) with clean whites and grays
+- **Typography**: Modern Poppins font family for readability
+- **Animations**: Smooth CSS transitions and JavaScript-powered interactions
+- **Icons**: Emoji-based icons for visual appeal and accessibility
+- **Layout**: CSS Grid and Flexbox for responsive design
+
+---
+
+**© 2024 Baddie AI Journal Hustle. All rights reserved.**
