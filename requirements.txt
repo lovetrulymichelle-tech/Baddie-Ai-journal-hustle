@@ -1,0 +1,14 @@
+# Core dependencies for Baddie AI Journal
+# Note: Installation may fail due to network limitations
+# Use alternative approaches documented in copilot-instructions.md
+
+Flask==3.1.2
+Flask-SQLAlchemy==3.1.1
+SQLAlchemy>=2.0.43
+
+# Testing
+pytest>=8.4.1
+
+# Code quality
+black>=25.1.0
+flake8>=7.3.0
