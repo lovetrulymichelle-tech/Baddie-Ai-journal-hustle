@@ -38,7 +38,8 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "baddie-journal=baddie_journal.cli:main",
+            "baddie-journal=baddie_journal.journal_cli:main",
+            "baddie-journal-demo=baddie_journal.cli:main",
         ],
     },
 )

@@ -10,5 +10,6 @@ __author__ = "Baddie AI Journal Team"
 
 from .models import JournalEntry, InsightData
 from .insights import InsightsHelper
+from .storage import JsonStorage
 
-__all__ = ["JournalEntry", "InsightData", "InsightsHelper"]
+__all__ = ["JournalEntry", "InsightData", "InsightsHelper", "JsonStorage"]
