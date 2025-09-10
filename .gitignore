@@ -205,3 +205,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Insights CSV exports
+insights_export_*.csv
+
+# Database files
+*.db
+journal.db
