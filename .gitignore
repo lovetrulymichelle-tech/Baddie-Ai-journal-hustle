@@ -208,3 +208,7 @@ __marimo__/
 
 # Insights CSV exports
 insights_export_*.csv
+
+# Database files
+*.db
+journal.db
