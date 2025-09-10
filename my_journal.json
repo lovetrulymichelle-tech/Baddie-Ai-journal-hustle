@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "content": "Had an amazing day working on the AI journal project!",
+    "mood": "excited",
+    "category": "work",
+    "tags": [
+      "coding",
+      "productivity",
+      "achievement"
+    ],
+    "created_at": "2025-09-10T12:24:54.860963"
+  },
+  {
+    "id": 2,
+    "content": "Feeling grateful for this opportunity to build something meaningful",
+    "mood": "grateful",
+    "category": "personal",
+    "tags": [
+      "gratitude",
+      "reflection"
+    ],
+    "created_at": "2025-09-10T12:25:05.974383"
+  },
+  {
+    "id": 3,
+    "content": "Successfully completed the AI journal implementation!",
+    "mood": "accomplished",
+    "category": "work",
+    "tags": [
+      "coding",
+      "achievement",
+      "completion"
+    ],
+    "created_at": "2025-09-10T12:27:13.953949"
+  }
+]
