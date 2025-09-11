@@ -151,30 +151,132 @@ After deployment, verify your application is working:
    - Check that your main application file exists
    - Review application logs for startup errors
 
-### Optional: Export/Import SQLite Data
+### Migrate data from SQLite to PostgreSQL
 
-If you're migrating from a local SQLite database:
+If you're migrating from a local SQLite database to your Railway PostgreSQL instance, use the provided migration script to safely transfer your journal entries.
 
-1. **Export existing data:**
+#### Prerequisites
+
+The migration script requires `psycopg2-binary`, which is already listed in `requirements.txt`.
+
+#### Step 1: Backup Your Local SQLite Database
+
+Before starting migration, create a backup of your local SQLite database:
+
+```bash
+# Create a backup copy of your SQLite database
+cp journal.db journal.db.backup
+
+# Optional: Create a SQL dump as additional backup
+sqlite3 journal.db .dump > journal_backup_$(date +%Y%m%d_%H%M%S).sql
+```
+
+#### Step 2: Set Environment Variables
+
+Set the required environment variables for source and destination databases:
+
+```bash
+# Source: Your local SQLite database
+export SQLALCHEMY_DATABASE_URI_SRC="sqlite:///journal.db"
+
+# Destination: Your Railway PostgreSQL database
+# Replace with your actual Railway PostgreSQL connection string
+export SQLALCHEMY_DATABASE_URI_DST="postgresql://username:password@host:port/database"
+```
+
+**Important:** Use the `postgresql://` prefix (not `postgres://`) for proper SQLAlchemy compatibility. You can find your Railway PostgreSQL connection string in the "Connect" tab of your PostgreSQL service.
+
+#### Step 3: Perform a Dry Run
+
+Before migrating actual data, perform a dry run to verify the migration will work correctly:
+
+```bash
+# Run the migration script in dry-run mode
+python migrate_sqlite_to_postgres.py --dry-run
+```
+
+This will:
+- Validate your database connections
+- Show you exactly what data would be migrated
+- Identify any potential issues without making changes
+
+#### Step 4: Perform the Actual Migration
+
+If the dry run completes successfully, perform the actual migration:
+
+```bash
+# Run the actual migration
+python migrate_sqlite_to_postgres.py
+```
+
+The script will:
+- Connect to both databases
+- Migrate all tables and data from SQLite to PostgreSQL
+- Provide a detailed summary of the migration results
+- Handle any data type conversions automatically
+
+#### Step 5: Verify Migration in Railway App
+
+After migration completes successfully:
+
+1. **Check the migration logs** for any warnings or errors
+2. **Deploy your application** to Railway (if not already deployed)
+3. **Test key functionality:**
    ```bash
-   # Create a backup of your SQLite data
-   sqlite3 your_database.db .dump > backup.sql
+   # If you have a command-line interface, test basic operations
+   # Or access your deployed Railway app URL
    ```
+4. **Verify your data:**
+   - Check that all journal entries are present
+   - Verify entry counts match between source and destination
+   - Test creating new entries to ensure the database is working correctly
+   - Confirm that insights and analytics reflect your migrated data
 
-2. **Prepare for PostgreSQL:**
-   - Review the SQL dump file
-   - Modify any SQLite-specific syntax for PostgreSQL compatibility
-   - Consider using tools like `pgloader` for automated migration
+#### Example Migration Workflow
 
-3. **Import to PostgreSQL:**
-   ```bash
-   # Connect to your Railway PostgreSQL instance
-   psql $DATABASE_URL < modified_backup.sql
-   ```
+Here's a complete example workflow:
 
-4. **Verify data integrity:**
-   - Check that all tables and data were imported correctly
-   - Test application functionality with the migrated data
+```bash
+# 1. Backup your data
+cp journal.db journal.db.backup
+
+# 2. Set environment variables (replace with your actual values)
+export SQLALCHEMY_DATABASE_URI_SRC="sqlite:///journal.db"
+export SQLALCHEMY_DATABASE_URI_DST="postgresql://postgres:password@containers-us-west-123.railway.app:6543/railway"
+
+# 3. Test with dry run
+python migrate_sqlite_to_postgres.py --dry-run
+
+# 4. Perform actual migration
+python migrate_sqlite_to_postgres.py
+
+# 5. Verify in your Railway app
+# Visit your deployed app URL and test functionality
+```
+
+#### Troubleshooting Migration
+
+**Common issues and solutions:**
+
+1. **Environment variable errors:**
+   - Ensure both `SQLALCHEMY_DATABASE_URI_SRC` and `SQLALCHEMY_DATABASE_URI_DST` are set
+   - Verify the PostgreSQL URI uses `postgresql://` prefix (not `postgres://`)
+   - Check that your Railway PostgreSQL credentials are correct
+
+2. **Connection errors:**
+   - Verify your local SQLite database file exists
+   - Ensure your Railway PostgreSQL service is running
+   - Test connectivity to Railway from your local machine
+
+3. **Migration failures:**
+   - Review the detailed error messages in the script output
+   - Ensure your local SQLite database isn't corrupted
+   - Try the dry run first to identify issues before actual migration
+
+4. **Data verification issues:**
+   - Compare row counts between source and destination
+   - Check for any data type conversion issues
+   - Verify that primary keys and relationships are preserved
 
 ---
 
