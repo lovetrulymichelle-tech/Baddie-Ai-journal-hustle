@@ -1,2 +1,3 @@
-# Database driver for PostgreSQL
+# Database drivers and ORM
 psycopg2-binary>=2.9.0
+sqlalchemy>=2.0.0
