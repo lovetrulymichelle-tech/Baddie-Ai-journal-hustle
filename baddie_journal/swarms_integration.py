@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from swarms import Agent
 from openai import OpenAI
 
-from .models import JournalEntry, InsightData
+from .models import InsightData
 from .insights import InsightsHelper
 
 
@@ -32,25 +32,26 @@ class SwarmAnalysisResult:
 class JournalAnalysisSwarm:
     """
     Swarm of AI agents specialized for different aspects of journal analysis.
-    
+
     This class coordinates multiple AI agents to provide comprehensive
     analysis of journal entries from different perspectives.
     """
-    
+
     def __init__(self, api_key: Optional[str] = None):
         """
         Initialize the Journal Analysis Swarm.
-        
+
         Args:
             api_key: OpenAI API key (optional, can use environment variable)
         """
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         if not self.api_key:
-            raise ValueError("OpenAI API key is required. Set OPENAI_API_KEY environment variable or pass api_key parameter.")
-        
+            raise ValueError("OpenAI API key is required. Set OPENAI_API_KEY environment variable "
+                             "or pass api_key parameter.")
+
         self.client = OpenAI(api_key=self.api_key)
         self._initialize_agents()
-    
+
     def _create_system_prompt(self, name: str, description: str, task: str) -> str:
         """Create a system prompt for an agent."""
         return f"""You are {name}, {description}.
@@ -65,24 +66,25 @@ Guidelines:
 - Be specific and concrete in your recommendations and insights
 
 Remember: This is private journal data. Treat it with respect and confidentiality."""
-    
+
     def _initialize_agents(self):
         """Initialize the specialized agents for journal analysis."""
-        
+
         # Mood Analysis Agent
         self.mood_agent = Agent(
             agent_name="Mood Analyzer",
             system_prompt=self._create_system_prompt(
                 name="Mood Analyzer",
                 description="an expert at analyzing emotional patterns and mood trends in journal entries",
-                task="Analyze journal entries to identify mood patterns, emotional triggers, and sentiment trends over time"
+                task="Analyze journal entries to identify mood patterns, emotional triggers, "
+                     "and sentiment trends over time"
             ),
             model_name="gpt-4o-mini",
             max_loops=1,
             temperature=0.3,
             openai_api_key=self.api_key
         )
-        
+
         # Pattern Recognition Agent
         self.pattern_agent = Agent(
             agent_name="Pattern Recognizer",
@@ -96,43 +98,45 @@ Remember: This is private journal data. Treat it with respect and confidentialit
             temperature=0.3,
             openai_api_key=self.api_key
         )
-        
+
         # Personal Growth Coach Agent
         self.growth_agent = Agent(
             agent_name="Growth Coach",
             system_prompt=self._create_system_prompt(
                 name="Personal Growth Coach",
                 description="an expert at identifying personal development opportunities and growth insights",
-                task="Analyze journal entries to identify growth opportunities, achievements, and areas for personal development"
+                task="Analyze journal entries to identify growth opportunities, achievements, "
+                     "and areas for personal development"
             ),
             model_name="gpt-4o-mini",
             max_loops=1,
             temperature=0.5,
             openai_api_key=self.api_key
         )
-        
+
         # Recommendation Agent
         self.recommendation_agent = Agent(
             agent_name="Recommendation Specialist",
             system_prompt=self._create_system_prompt(
                 name="Recommendation Specialist",
                 description="an expert at generating actionable recommendations based on journal analysis",
-                task="Generate personalized recommendations for improving well-being, productivity, and personal growth based on journal insights"
+                task="Generate personalized recommendations for improving well-being, productivity, "
+                     "and personal growth based on journal insights"
             ),
             model_name="gpt-4o-mini",
             max_loops=1,
             temperature=0.6,
             openai_api_key=self.api_key
         )
-    
+
     def _prepare_journal_context(self, insight_data: InsightData, include_content: bool = False) -> str:
         """
         Prepare journal data context for analysis.
-        
+
         Args:
             insight_data: InsightData containing journal entries
             include_content: Whether to include full content (privacy consideration)
-            
+
         Returns:
             Formatted context string for AI analysis
         """
@@ -140,14 +144,19 @@ Remember: This is private journal data. Treat it with respect and confidentialit
         metrics = helper.get_total_metrics()
         mood_breakdown = helper.get_mood_breakdown()
         top_tags = helper.get_top_tags(10)
-        
+
+        earliest_date = (metrics['date_range']['earliest'][:10]
+                         if metrics['date_range']['earliest'] else 'N/A')
+        latest_date = (metrics['date_range']['latest'][:10]
+                       if metrics['date_range']['latest'] else 'N/A')
+
         context = f"""
 JOURNAL ANALYSIS CONTEXT:
 
 BASIC METRICS:
 - Total Entries: {metrics['total_entries']}
 - Current Streak: {metrics['current_streak']} days
-- Date Range: {metrics['date_range']['earliest'][:10] if metrics['date_range']['earliest'] else 'N/A'} to {metrics['date_range']['latest'][:10] if metrics['date_range']['latest'] else 'N/A'}
+- Date Range: {earliest_date} to {latest_date}
 - Unique Moods: {metrics['unique_moods']}
 - Unique Categories: {metrics['unique_categories']}
 - Average Frequency (30 days): {metrics['average_frequency_30_days']:.1f} entries/day
@@ -160,32 +169,36 @@ TOP TAGS:
 
 RECENT ENTRIES SUMMARY:
 """
-        
+
         # Add recent entries (last 10 or all if fewer)
         recent_entries = sorted(insight_data.entries, key=lambda x: x.timestamp, reverse=True)[:10]
-        
+
         for i, entry in enumerate(recent_entries, 1):
             if include_content:
                 # For privacy, only include first 100 characters of content
                 content_preview = entry.content[:100] + "..." if len(entry.content) > 100 else entry.content
-                context += f"\nEntry {i}: [{entry.timestamp.strftime('%Y-%m-%d %H:%M')}] Mood: {entry.mood}, Category: {entry.category}, Tags: {entry.tags}\nContent Preview: {content_preview}\n"
+                timestamp_str = entry.timestamp.strftime('%Y-%m-%d %H:%M')
+                context += (f"\nEntry {i}: [{timestamp_str}] Mood: {entry.mood}, Category: {entry.category}, "
+                            f"Tags: {entry.tags}\nContent Preview: {content_preview}\n")
             else:
-                context += f"\nEntry {i}: [{entry.timestamp.strftime('%Y-%m-%d %H:%M')}] Mood: {entry.mood}, Category: {entry.category}, Tags: {entry.tags}\n"
-        
+                timestamp_str = entry.timestamp.strftime('%Y-%m-%d %H:%M')
+                context += (f"\nEntry {i}: [{timestamp_str}] Mood: {entry.mood}, Category: {entry.category}, "
+                            f"Tags: {entry.tags}\n")
+
         return context
-    
+
     def analyze_mood_patterns(self, insight_data: InsightData) -> Dict[str, Any]:
         """
         Analyze mood patterns using the mood analysis agent.
-        
+
         Args:
             insight_data: InsightData containing journal entries
-            
+
         Returns:
             Dictionary containing mood analysis results
         """
         context = self._prepare_journal_context(insight_data)
-        
+
         prompt = f"""
 {context}
 
@@ -205,7 +218,7 @@ Provide your analysis in JSON format with the following structure:
     "insights": ["key", "insights", "about", "emotional", "patterns"]
 }}
 """
-        
+
         try:
             response = self.mood_agent.run(prompt)
             # Try to parse JSON response, fallback to text analysis
@@ -221,19 +234,19 @@ Provide your analysis in JSON format with the following structure:
                 "error": f"Mood analysis failed: {str(e)}",
                 "fallback_analysis": "Unable to perform AI mood analysis"
             }
-    
+
     def identify_behavioral_patterns(self, insight_data: InsightData) -> Dict[str, Any]:
         """
         Identify behavioral patterns using the pattern recognition agent.
-        
+
         Args:
             insight_data: InsightData containing journal entries
-            
+
         Returns:
             Dictionary containing pattern analysis results
         """
         context = self._prepare_journal_context(insight_data)
-        
+
         prompt = f"""
 {context}
 
@@ -253,7 +266,7 @@ Provide your analysis in JSON format with the following structure:
     "behavioral_correlations": ["correlations", "between", "behaviors"]
 }}
 """
-        
+
         try:
             response = self.pattern_agent.run(prompt)
             try:
@@ -268,19 +281,19 @@ Provide your analysis in JSON format with the following structure:
                 "error": f"Pattern analysis failed: {str(e)}",
                 "fallback_analysis": "Unable to perform AI pattern analysis"
             }
-    
+
     def generate_growth_insights(self, insight_data: InsightData) -> Dict[str, Any]:
         """
         Generate personal growth insights using the growth coach agent.
-        
+
         Args:
             insight_data: InsightData containing journal entries
-            
+
         Returns:
             Dictionary containing growth insights
         """
         context = self._prepare_journal_context(insight_data)
-        
+
         prompt = f"""
 {context}
 
@@ -300,7 +313,7 @@ Provide your analysis in JSON format with the following structure:
     "growth_trajectory": "overall assessment of growth direction"
 }}
 """
-        
+
         try:
             response = self.growth_agent.run(prompt)
             try:
@@ -315,20 +328,20 @@ Provide your analysis in JSON format with the following structure:
                 "error": f"Growth analysis failed: {str(e)}",
                 "fallback_analysis": "Unable to perform AI growth analysis"
             }
-    
+
     def generate_recommendations(self, insight_data: InsightData, previous_analyses: Dict[str, Any]) -> List[str]:
         """
         Generate personalized recommendations based on all analyses.
-        
+
         Args:
             insight_data: InsightData containing journal entries
             previous_analyses: Results from other agent analyses
-            
+
         Returns:
             List of personalized recommendations
         """
         context = self._prepare_journal_context(insight_data)
-        
+
         prompt = f"""
 {context}
 
@@ -351,7 +364,7 @@ Provide 5-10 specific, actionable recommendations in JSON format:
     ]
 }}
 """
-        
+
         try:
             response = self.recommendation_agent.run(prompt)
             try:
@@ -368,14 +381,14 @@ Provide 5-10 specific, actionable recommendations in JSON format:
                 return recommendations[:10]  # Limit to 10 recommendations
         except Exception as e:
             return [f"Unable to generate AI recommendations: {str(e)}"]
-    
+
     def perform_comprehensive_analysis(self, insight_data: InsightData) -> SwarmAnalysisResult:
         """
         Perform comprehensive analysis using all agents in the swarm.
-        
+
         Args:
             insight_data: InsightData containing journal entries
-            
+
         Returns:
             SwarmAnalysisResult containing all analysis results
         """
@@ -383,16 +396,16 @@ Provide 5-10 specific, actionable recommendations in JSON format:
         mood_analysis = self.analyze_mood_patterns(insight_data)
         pattern_insights = self.identify_behavioral_patterns(insight_data)
         growth_insights = self.generate_growth_insights(insight_data)
-        
+
         # Combine analyses for recommendations
         combined_analyses = {
             "mood_analysis": mood_analysis,
             "pattern_insights": pattern_insights,
             "growth_insights": growth_insights
         }
-        
+
         recommendations = self.generate_recommendations(insight_data, combined_analyses)
-        
+
         # Create comprehensive result
         return SwarmAnalysisResult(
             mood_analysis=mood_analysis,
