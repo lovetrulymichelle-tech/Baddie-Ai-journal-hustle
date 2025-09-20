@@ -16,14 +16,14 @@ The Insights feature provides analytics on your journal entries to help you trac
 
 ### Example Usage
 ```python
-from datetime import datetime
+from datetime import datetime, UTC
 from baddie_journal.models import JournalEntry, InsightData
 from baddie_journal.insights import InsightsHelper
 
 # Sample entries
 entries = [
-    JournalEntry(1, "Great day!", "happy", "personal", ["motivation"], datetime.utcnow()),
-    JournalEntry(2, "Productive work", "focused", "work", ["productivity"], datetime.utcnow())
+    JournalEntry(1, "Great day!", "happy", "personal", ["motivation"], datetime.now(UTC)),
+    JournalEntry(2, "Productive work", "focused", "work", ["productivity"], datetime.now(UTC))
 ]
 
 helper = InsightsHelper(InsightData(entries))
