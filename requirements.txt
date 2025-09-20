@@ -1,3 +1,11 @@
 # Database drivers and ORM
 psycopg2-binary>=2.9.0
 sqlalchemy>=2.0.0
+
+# AI and Swarms Framework
+swarms>=6.0.0
+openai>=1.0.0
+
+# Additional dependencies for journal features
+python-dateutil>=2.8.0
+pandas>=2.0.0
