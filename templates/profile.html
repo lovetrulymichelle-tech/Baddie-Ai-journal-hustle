@@ -1,0 +1,755 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Baddie AI Journal Hustle{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            <div class="avatar-container">
+                <img src="https://via.placeholder.com/120x120/FF69B4/FFFFFF?text=👑" alt="Profile Avatar" class="avatar-image">
+                <button class="avatar-edit">
+                    <i class="fas fa-camera"></i>
+                </button>
+            </div>
+        </div>
+        <div class="profile-info">
+            <h1>Queen Baddie</h1>
+            <p>Building my empire one journal entry at a time ✨</p>
+            <div class="profile-stats">
+                <div class="stat">
+                    <span class="stat-value">127</span>
+                    <span class="stat-label">Entries</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">45</span>
+                    <span class="stat-label">Days Strong</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">Queen</span>
+                    <span class="stat-label">Level</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="profile-content">
+        <!-- Account Settings -->
+        <div class="settings-card card">
+            <div class="card-header">
+                <h3>
+                    <i class="fas fa-user-crown"></i>
+                    Account Settings
+                </h3>
+            </div>
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label class="setting-label">
+                        <i class="fas fa-user"></i>
+                        Display Name
+                    </label>
+                    <input type="text" value="Queen Baddie" class="setting-input">
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">
+                        <i class="fas fa-envelope"></i>
+                        Email Address
+                    </label>
+                    <input type="email" value="queen@baddie.com" class="setting-input">
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">
+                        <i class="fas fa-quote-right"></i>
+                        Bio/Tagline
+                    </label>
+                    <textarea class="setting-textarea" rows="3">Building my empire one journal entry at a time ✨</textarea>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">
+                        <i class="fas fa-palette"></i>
+                        Theme Preference
+                    </label>
+                    <select class="setting-select">
+                        <option value="pink-luxe" selected>Pink Luxe (Current)</option>
+                        <option value="royal-purple">Royal Purple</option>
+                        <option value="rose-gold">Rose Gold</option>
+                        <option value="midnight-glam">Midnight Glam</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="settings-actions">
+                <button class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+        
+        <!-- Journaling Preferences -->
+        <div class="preferences-card card">
+            <div class="card-header">
+                <h3>
+                    <i class="fas fa-feather"></i>
+                    Journaling Preferences
+                </h3>
+            </div>
+            <div class="preferences-grid">
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h4>Daily Reminders</h4>
+                        <p>Get reminded to write your daily entry</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h4>Mood Tracking</h4>
+                        <p>Include mood analysis in insights</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h4>AI Insights</h4>
+                        <p>Enable AI-powered analysis and recommendations</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h4>Auto-Save Drafts</h4>
+                        <p>Automatically save your entries as you write</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="preference-setting">
+                    <label class="setting-label">
+                        <i class="fas fa-clock"></i>
+                        Reminder Time
+                    </label>
+                    <input type="time" value="20:00" class="setting-input">
+                </div>
+                
+                <div class="preference-setting">
+                    <label class="setting-label">
+                        <i class="fas fa-calendar"></i>
+                        Preferred Writing Days
+                    </label>
+                    <div class="days-selector">
+                        <label class="day-option">
+                            <input type="checkbox" checked>
+                            <span>Mon</span>
+                        </label>
+                        <label class="day-option">
+                            <input type="checkbox" checked>
+                            <span>Tue</span>
+                        </label>
+                        <label class="day-option">
+                            <input type="checkbox" checked>
+                            <span>Wed</span>
+                        </label>
+                        <label class="day-option">
+                            <input type="checkbox" checked>
+                            <span>Thu</span>
+                        </label>
+                        <label class="day-option">
+                            <input type="checkbox" checked>
+                            <span>Fri</span>
+                        </label>
+                        <label class="day-option">
+                            <input type="checkbox">
+                            <span>Sat</span>
+                        </label>
+                        <label class="day-option">
+                            <input type="checkbox">
+                            <span>Sun</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Privacy & Security -->
+        <div class="privacy-card card">
+            <div class="card-header">
+                <h3>
+                    <i class="fas fa-shield-alt"></i>
+                    Privacy & Security
+                </h3>
+            </div>
+            <div class="privacy-grid">
+                <div class="privacy-item">
+                    <div class="privacy-info">
+                        <h4>Private Journal</h4>
+                        <p>Keep your entries completely private</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="privacy-item">
+                    <div class="privacy-info">
+                        <h4>Data Encryption</h4>
+                        <p>Encrypt your journal entries for extra security</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="privacy-actions">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-download"></i>
+                        Export All Data
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-key"></i>
+                        Change Password
+                    </button>
+                    <button class="btn btn-danger">
+                        <i class="fas fa-trash"></i>
+                        Delete Account
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Achievements -->
+        <div class="achievements-card card">
+            <div class="card-header">
+                <h3>
+                    <i class="fas fa-trophy"></i>
+                    Achievements
+                </h3>
+                <p>Your baddie milestones</p>
+            </div>
+            <div class="achievements-grid">
+                <div class="achievement earned">
+                    <div class="achievement-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h4>First Entry</h4>
+                        <p>Started your journey</p>
+                    </div>
+                    <div class="achievement-date">Jan 1, 2024</div>
+                </div>
+                
+                <div class="achievement earned">
+                    <div class="achievement-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h4>Week Warrior</h4>
+                        <p>7 day writing streak</p>
+                    </div>
+                    <div class="achievement-date">Jan 8, 2024</div>
+                </div>
+                
+                <div class="achievement earned">
+                    <div class="achievement-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h4>Mood Master</h4>
+                        <p>Tracked 50 moods</p>
+                    </div>
+                    <div class="achievement-date">Jan 15, 2024</div>
+                </div>
+                
+                <div class="achievement">
+                    <div class="achievement-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h4>Diamond Status</h4>
+                        <p>Write for 30 days straight</p>
+                    </div>
+                    <div class="achievement-progress">15/30 days</div>
+                </div>
+                
+                <div class="achievement">
+                    <div class="achievement-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h4>Novel Writer</h4>
+                        <p>Write 100,000 words</p>
+                    </div>
+                    <div class="achievement-progress">45,672/100,000</div>
+                </div>
+                
+                <div class="achievement">
+                    <div class="achievement-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <h4>Consistency Queen</h4>
+                        <p>Write for 100 days</p>
+                    </div>
+                    <div class="achievement-progress">45/100 days</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Profile Page Styles */
+.profile-section {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-xl);
+    background: var(--gradient-secondary);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.profile-avatar {
+    flex-shrink: 0;
+}
+
+.avatar-container {
+    position: relative;
+    display: inline-block;
+}
+
+.avatar-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid var(--primary-pink);
+    object-fit: cover;
+}
+
+.avatar-edit {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 35px;
+    height: 35px;
+    background: var(--primary-pink);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s ease;
+}
+
+.avatar-edit:hover {
+    background: var(--secondary-pink);
+    transform: scale(1.1);
+}
+
+.profile-info {
+    flex: 1;
+    text-align: left;
+}
+
+.profile-info h1 {
+    font-family: var(--font-primary);
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.profile-info p {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.profile-stats {
+    display: flex;
+    gap: var(--spacing-xl);
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-value {
+    display: block;
+    font-family: var(--font-primary);
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary-pink);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+.card-header {
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.card-header h3 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.card-header p {
+    color: var(--text-light);
+    margin: 0;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.setting-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.setting-input,
+.setting-textarea,
+.setting-select {
+    padding: var(--spacing-sm);
+    border: 2px solid var(--light-pink);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-secondary);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.setting-input:focus,
+.setting-textarea:focus,
+.setting-select:focus {
+    outline: none;
+    border-color: var(--primary-pink);
+    box-shadow: 0 0 0 3px rgba(255, 20, 147, 0.1);
+}
+
+.settings-actions {
+    text-align: center;
+}
+
+.preferences-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.preference-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: var(--bg-overlay);
+    border-radius: var(--radius-sm);
+}
+
+.preference-info h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+}
+
+.preference-info p {
+    color: var(--text-light);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 25px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 19px;
+    width: 19px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background: var(--gradient-primary);
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(25px);
+}
+
+.preference-setting {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background: var(--bg-overlay);
+    border-radius: var(--radius-sm);
+}
+
+.days-selector {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+}
+
+.day-option {
+    cursor: pointer;
+}
+
+.day-option input {
+    display: none;
+}
+
+.day-option span {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--bg-card);
+    border: 2px solid var(--light-pink);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 40px;
+    text-align: center;
+}
+
+.day-option input:checked + span {
+    background: var(--primary-pink);
+    color: white;
+    border-color: var(--primary-pink);
+}
+
+.privacy-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.privacy-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: var(--bg-overlay);
+    border-radius: var(--radius-sm);
+}
+
+.privacy-info h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+}
+
+.privacy-info p {
+    color: var(--text-light);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.privacy-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ff4757, #ff3838);
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #ff3838, #ff2f2f);
+    transform: translateY(-2px);
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.achievement {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--bg-overlay);
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.achievement.earned {
+    background: var(--gradient-secondary);
+    border-color: var(--primary-pink);
+}
+
+.achievement-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.achievement.earned .achievement-icon {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.achievement:not(.earned) .achievement-icon {
+    background: #ddd;
+    color: #999;
+}
+
+.achievement-info {
+    flex: 1;
+}
+
+.achievement-info h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.achievement-info p {
+    color: var(--text-light);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.achievement-date {
+    font-size: 0.8rem;
+    color: var(--primary-pink);
+    font-weight: 600;
+}
+
+.achievement-progress {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-info {
+        text-align: center;
+    }
+    
+    .profile-stats {
+        justify-content: center;
+    }
+    
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .privacy-actions {
+        flex-direction: column;
+    }
+    
+    .achievements-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .preference-item,
+    .privacy-item {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}
