@@ -1,0 +1,491 @@
+{% extends "base.html" %}
+
+{% block title %}New Entry - Baddie AI Journal Hustle{% endblock %}
+
+{% block content %}
+<section class="new-entry-section">
+    <div class="page-header">
+        <h1>Create Your Royal Entry</h1>
+        <p>Document your journey to greatness ✨</p>
+    </div>
+    
+    <form action="{{ url_for('add_entry') }}" method="POST" class="entry-form">
+        <div class="form-container">
+            <div class="form-main">
+                <div class="form-group">
+                    <label for="content" class="form-label">
+                        <i class="fas fa-feather"></i>
+                        Your Thoughts & Experiences
+                    </label>
+                    <textarea 
+                        id="content" 
+                        name="content" 
+                        class="form-textarea" 
+                        placeholder="What's on your mind today, queen? Share your thoughts, victories, challenges, or anything that matters to you..."
+                        rows="8"
+                        required
+                    ></textarea>
+                    <div class="textarea-counter">
+                        <span id="char-count">0</span> characters
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="mood" class="form-label">
+                            <i class="fas fa-smile"></i>
+                            Current Mood
+                        </label>
+                        <select id="mood" name="mood" class="form-select" required>
+                            <option value="">Choose your vibe...</option>
+                            <option value="ecstatic">🤩 Ecstatic</option>
+                            <option value="happy">😊 Happy</option>
+                            <option value="grateful">🙏 Grateful</option>
+                            <option value="excited">🔥 Excited</option>
+                            <option value="motivated">💪 Motivated</option>
+                            <option value="focused">🎯 Focused</option>
+                            <option value="peaceful">😌 Peaceful</option>
+                            <option value="contemplative">🤔 Contemplative</option>
+                            <option value="confident">👑 Confident</option>
+                            <option value="ambitious">🚀 Ambitious</option>
+                            <option value="empowered">💎 Empowered</option>
+                            <option value="neutral">😐 Neutral</option>
+                            <option value="tired">😴 Tired</option>
+                            <option value="stressed">😰 Stressed</option>
+                            <option value="overwhelmed">😵 Overwhelmed</option>
+                            <option value="sad">😢 Sad</option>
+                            <option value="anxious">😟 Anxious</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category" class="form-label">
+                            <i class="fas fa-folder"></i>
+                            Category
+                        </label>
+                        <select id="category" name="category" class="form-select" required>
+                            <option value="">Select category...</option>
+                            <option value="personal">👤 Personal Growth</option>
+                            <option value="work">💼 Work & Career</option>
+                            <option value="relationships">💕 Relationships</option>
+                            <option value="health">🏃‍♀️ Health & Wellness</option>
+                            <option value="goals">🎯 Goals & Dreams</option>
+                            <option value="lifestyle">✨ Lifestyle</option>
+                            <option value="finance">💰 Money & Finance</option>
+                            <option value="creativity">🎨 Creativity</option>
+                            <option value="spirituality">🙏 Spirituality</option>
+                            <option value="travel">✈️ Travel & Adventure</option>
+                            <option value="learning">📚 Learning & Education</option>
+                            <option value="challenges">💪 Challenges</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tags" class="form-label">
+                        <i class="fas fa-hashtag"></i>
+                        Tags (Optional)
+                    </label>
+                    <input 
+                        type="text" 
+                        id="tags" 
+                        name="tags" 
+                        class="form-input" 
+                        placeholder="Add tags separated by commas (e.g., success, motivation, goals)"
+                    >
+                    <div class="form-hint">
+                        <i class="fas fa-lightbulb"></i>
+                        Tags help you organize and find your entries later
+                    </div>
+                </div>
+                
+                <div class="suggested-tags">
+                    <span class="tags-label">Popular Tags:</span>
+                    <div class="tag-suggestions">
+                        <button type="button" class="tag-suggestion" onclick="addTag('success')">success</button>
+                        <button type="button" class="tag-suggestion" onclick="addTag('motivation')">motivation</button>
+                        <button type="button" class="tag-suggestion" onclick="addTag('goals')">goals</button>
+                        <button type="button" class="tag-suggestion" onclick="addTag('gratitude')">gratitude</button>
+                        <button type="button" class="tag-suggestion" onclick="addTag('productivity')">productivity</button>
+                        <button type="button" class="tag-suggestion" onclick="addTag('self-love')">self-love</button>
+                        <button type="button" class="tag-suggestion" onclick="addTag('mindfulness')">mindfulness</button>
+                        <button type="button" class="tag-suggestion" onclick="addTag('achievement')">achievement</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-sidebar">
+                <div class="writing-tips card">
+                    <h3>
+                        <i class="fas fa-crown"></i>
+                        Writing Tips
+                    </h3>
+                    <ul>
+                        <li>Write authentically - this is your safe space 💕</li>
+                        <li>Include both wins and challenges</li>
+                        <li>Describe your emotions and thoughts</li>
+                        <li>Set intentions for tomorrow</li>
+                        <li>Celebrate your progress, no matter how small</li>
+                    </ul>
+                </div>
+                
+                <div class="mood-guide card">
+                    <h3>
+                        <i class="fas fa-heart"></i>
+                        Mood Guide
+                    </h3>
+                    <div class="mood-examples">
+                        <div class="mood-example">
+                            <strong>High Energy:</strong> Ecstatic, Excited, Motivated
+                        </div>
+                        <div class="mood-example">
+                            <strong>Positive:</strong> Happy, Grateful, Confident
+                        </div>
+                        <div class="mood-example">
+                            <strong>Calm:</strong> Peaceful, Contemplative, Focused
+                        </div>
+                        <div class="mood-example">
+                            <strong>Low Energy:</strong> Tired, Overwhelmed, Neutral
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                <i class="fas fa-save"></i>
+                Save Draft
+            </button>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-crown"></i>
+                Publish Entry
+            </button>
+        </div>
+    </form>
+</section>
+
+<style>
+/* New Entry Page Styles */
+.new-entry-section {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.page-header h1 {
+    font-family: var(--font-primary);
+    font-size: 3rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--spacing-sm);
+}
+
+.page-header p {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+}
+
+.form-container {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.form-main {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--light-pink);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+    font-size: 1.1rem;
+}
+
+.form-textarea,
+.form-input,
+.form-select {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid var(--light-pink);
+    border-radius: var(--radius-md);
+    font-family: var(--font-secondary);
+    font-size: 1rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 200px;
+    line-height: 1.6;
+}
+
+.form-textarea:focus,
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-pink);
+    box-shadow: 0 0 0 3px rgba(255, 20, 147, 0.1);
+    background: var(--bg-card);
+}
+
+.textarea-counter {
+    text-align: right;
+    margin-top: var(--spacing-xs);
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.form-hint {
+    margin-top: var(--spacing-xs);
+    font-size: 0.9rem;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.suggested-tags {
+    margin-top: var(--spacing-md);
+}
+
+.tags-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+    display: block;
+}
+
+.tag-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+}
+
+.tag-suggestion {
+    background: var(--bg-overlay);
+    border: 1px solid var(--light-pink);
+    color: var(--primary-pink);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tag-suggestion:hover {
+    background: var(--primary-pink);
+    color: var(--text-white);
+    transform: translateY(-2px);
+}
+
+.form-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.writing-tips,
+.mood-guide {
+    padding: var(--spacing-lg);
+}
+
+.writing-tips h3,
+.mood-guide h3 {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--primary-pink);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.2rem;
+}
+
+.writing-tips ul {
+    list-style: none;
+    padding: 0;
+}
+
+.writing-tips li {
+    padding: var(--spacing-xs) 0;
+    padding-left: var(--spacing-md);
+    position: relative;
+    color: var(--text-secondary);
+}
+
+.writing-tips li:before {
+    content: "✨";
+    position: absolute;
+    left: 0;
+}
+
+.mood-examples {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.mood-example {
+    padding: var(--spacing-sm);
+    background: var(--bg-overlay);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+}
+
+.mood-example strong {
+    color: var(--primary-pink);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    padding-top: var(--spacing-xl);
+    border-top: 2px solid var(--light-pink);
+}
+
+.form-actions .btn {
+    font-size: 1.1rem;
+    padding: var(--spacing-md) var(--spacing-xl);
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .page-header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .form-main {
+        padding: var(--spacing-lg);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+</style>
+
+<script>
+// Character counter for textarea
+document.getElementById('content').addEventListener('input', function() {
+    const charCount = this.value.length;
+    document.getElementById('char-count').textContent = charCount;
+    
+    if (charCount > 500) {
+        document.getElementById('char-count').style.color = 'var(--primary-pink)';
+    } else {
+        document.getElementById('char-count').style.color = 'var(--text-light)';
+    }
+});
+
+// Add tag function
+function addTag(tag) {
+    const tagsInput = document.getElementById('tags');
+    const currentTags = tagsInput.value;
+    
+    if (currentTags === '') {
+        tagsInput.value = tag;
+    } else if (!currentTags.includes(tag)) {
+        tagsInput.value = currentTags + ', ' + tag;
+    }
+    
+    tagsInput.focus();
+}
+
+// Save draft function (placeholder)
+function saveDraft() {
+    // This would typically save to localStorage or send to server
+    alert('Draft saved! 💾');
+}
+
+// Auto-save functionality
+let autoSaveTimeout;
+function autoSave() {
+    clearTimeout(autoSaveTimeout);
+    autoSaveTimeout = setTimeout(() => {
+        const content = document.getElementById('content').value;
+        if (content.length > 50) {
+            localStorage.setItem('journal_draft', JSON.stringify({
+                content: content,
+                mood: document.getElementById('mood').value,
+                category: document.getElementById('category').value,
+                tags: document.getElementById('tags').value,
+                timestamp: new Date().toISOString()
+            }));
+            console.log('Auto-saved draft');
+        }
+    }, 3000);
+}
+
+// Load draft on page load
+window.addEventListener('load', function() {
+    const draft = localStorage.getItem('journal_draft');
+    if (draft) {
+        const draftData = JSON.parse(draft);
+        if (confirm('Found a saved draft. Would you like to load it?')) {
+            document.getElementById('content').value = draftData.content || '';
+            document.getElementById('mood').value = draftData.mood || '';
+            document.getElementById('category').value = draftData.category || '';
+            document.getElementById('tags').value = draftData.tags || '';
+            
+            // Update character count
+            const charCount = draftData.content ? draftData.content.length : 0;
+            document.getElementById('char-count').textContent = charCount;
+        }
+    }
+});
+
+// Set up auto-save listeners
+document.getElementById('content').addEventListener('input', autoSave);
+document.getElementById('mood').addEventListener('change', autoSave);
+document.getElementById('category').addEventListener('change', autoSave);
+document.getElementById('tags').addEventListener('input', autoSave);
+
+// Clear draft on successful submission
+document.querySelector('.entry-form').addEventListener('submit', function() {
+    localStorage.removeItem('journal_draft');
+});
+</script>
+{% endblock %}

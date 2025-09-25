@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Baddie AI Journal Hustle{% endblock %}
+
+{% block content %}
+<section class="journal-entries-section">
+    <div class="section-header">
+        <h2>Your Royal Journal Entries</h2>
+        <p>Transform your thoughts into luxury insights ✨</p>
+    </div>
+    
+    {% if entries %}
+        <div class="entries-grid">
+            {% for entry in entries %}
+                <article class="entry-card card">
+                    <div class="entry-header">
+                        <div class="entry-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            {{ entry.date }}
+                        </div>
+                        <div class="entry-mood mood-{{ entry.mood }}">
+                            {% if entry.mood == 'happy' %}
+                                <i class="fas fa-smile"></i> Happy
+                            {% elif entry.mood == 'focused' %}
+                                <i class="fas fa-bullseye"></i> Focused
+                            {% elif entry.mood == 'contemplative' %}
+                                <i class="fas fa-brain"></i> Contemplative
+                            {% elif entry.mood == 'excited' %}
+                                <i class="fas fa-fire"></i> Excited
+                            {% elif entry.mood == 'grateful' %}
+                                <i class="fas fa-heart"></i> Grateful
+                            {% else %}
+                                <i class="fas fa-circle"></i> {{ entry.mood.title() }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="entry-content">
+                        <p>{{ entry.content }}</p>
+                    </div>
+                    
+                    <div class="entry-footer">
+                        <div class="entry-category">
+                            <i class="fas fa-folder"></i>
+                            <span class="category-{{ entry.category }}">{{ entry.category.title() }}</span>
+                        </div>
+                        
+                        {% if entry.tags %}
+                            <div class="entry-tags">
+                                {% for tag in entry.tags %}
+                                    <span class="tag">#{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="entry-actions">
+                        <button class="btn-action" title="Edit Entry">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action" title="Share Entry">
+                            <i class="fas fa-share"></i>
+                        </button>
+                        <button class="btn-action" title="Favorite Entry">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+        
+        <div class="load-more-section text-center mt-4">
+            <button class="btn btn-secondary">
+                <i class="fas fa-plus-circle"></i>
+                Load More Entries
+            </button>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-feather-alt"></i>
+            </div>
+            <h3>Your Journey Starts Here</h3>
+            <p>Begin documenting your baddie journey with your first journal entry!</p>
+            <a href="{{ url_for('new_entry') }}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i>
+                Create Your First Entry
+            </a>
+        </div>
+    {% endif %}
+</section>
+
+<section class="quick-stats">
+    <div class="stats-container">
+        <div class="stat-card card">
+            <div class="stat-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ entries|length }}</h3>
+                <p>Total Entries</p>
+            </div>
+        </div>
+        
+        <div class="stat-card card">
+            <div class="stat-icon">
+                <i class="fas fa-fire"></i>
+            </div>
+            <div class="stat-content">
+                <h3>3</h3>
+                <p>Day Streak</p>
+            </div>
+        </div>
+        
+        <div class="stat-card card">
+            <div class="stat-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Queen</h3>
+                <p>Status Level</p>
+            </div>
+        </div>
+        
+        <div class="stat-card card">
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-content">
+                <h3>95%</h3>
+                <p>Mood Score</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="motivational-quote">
+    <div class="quote-card card">
+        <div class="quote-content">
+            <i class="fas fa-quote-left quote-icon"></i>
+            <blockquote>
+                "You are the CEO of your own life. Start acting like it and build your empire!"
+            </blockquote>
+            <cite>- Baddie Wisdom ✨</cite>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Homepage Specific Styles */
+.section-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.section-header h2 {
+    font-family: var(--font-primary);
+    font-size: 2.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--spacing-sm);
+}
+
+.entries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.entry-card {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.entry-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-strong);
+}
+
+.entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--light-pink);
+}
+
+.entry-date {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.entry-mood {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.mood-happy {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #8B4513;
+}
+
+.mood-focused {
+    background: linear-gradient(135deg, #87CEEB, #4682B4);
+    color: #2F4F4F;
+}
+
+.mood-contemplative {
+    background: linear-gradient(135deg, #DDA0DD, #9370DB);
+    color: #4B0082;
+}
+
+.mood-excited {
+    background: linear-gradient(135deg, #FF6347, #FF4500);
+    color: #8B0000;
+}
+
+.mood-grateful {
+    background: linear-gradient(135deg, #98FB98, #32CD32);
+    color: #006400;
+}
+
+.entry-content {
+    margin-bottom: var(--spacing-md);
+}
+
+.entry-content p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+
+.entry-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.entry-category {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.category-personal {
+    color: var(--primary-pink);
+}
+
+.category-work {
+    color: var(--deep-burgundy);
+}
+
+.entry-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+}
+
+.tag {
+    background: var(--bg-overlay);
+    color: var(--primary-pink);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.entry-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-xs);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--light-pink);
+}
+
+.btn-action {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-action:hover {
+    background: var(--bg-overlay);
+    color: var(--primary-pink);
+    transform: scale(1.1);
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-xl) 0;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: var(--light-pink);
+    margin-bottom: var(--spacing-md);
+}
+
+.empty-state h3 {
+    font-family: var(--font-primary);
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.quick-stats {
+    margin: var(--spacing-xl) 0;
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    text-align: left;
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-content h3 {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+    font-family: var(--font-primary);
+}
+
+.stat-content p {
+    color: var(--text-light);
+    margin: 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.motivational-quote {
+    margin: var(--spacing-xl) 0;
+}
+
+.quote-card {
+    background: var(--gradient-secondary);
+    text-align: center;
+    padding: var(--spacing-xl);
+    position: relative;
+}
+
+.quote-icon {
+    font-size: 3rem;
+    color: var(--primary-pink);
+    margin-bottom: var(--spacing-md);
+}
+
+.quote-card blockquote {
+    font-family: var(--font-primary);
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.6;
+}
+
+.quote-card cite {
+    font-family: var(--font-script);
+    font-size: 1.2rem;
+    color: var(--primary-pink);
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .entries-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .entry-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .section-header h2 {
+        font-size: 2rem;
+    }
+    
+    .quote-card blockquote {
+        font-size: 1.2rem;
+    }
+}
+</style>
+{% endblock %}
