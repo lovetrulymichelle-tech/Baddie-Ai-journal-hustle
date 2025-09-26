@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Insights - Baddie AI Journal Hustle{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+        <i class="fas fa-chart-bar me-2"></i>Your Journal Insights
+    </h2>
+    <div>
+        <span class="badge bg-success fs-6">{{ total_entries }} Entries Analyzed</span>
+    </div>
+</div>
+
+<!-- Key Metrics Row -->
+<div class="row mb-4">
+    <div class="col-md-3 col-6 mb-3">
+        <div class="card text-center border-primary">
+            <div class="card-body">
+                <i class="fas fa-fire fa-3x text-primary mb-2"></i>
+                <h3 class="text-primary mb-0">{{ streak }}</h3>
+                <small class="text-muted">Day Streak</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+        <div class="card text-center border-success">
+            <div class="card-body">
+                <i class="fas fa-book fa-3x text-success mb-2"></i>
+                <h3 class="text-success mb-0">{{ total_entries }}</h3>
+                <small class="text-muted">Total Entries</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+        <div class="card text-center border-info">
+            <div class="card-body">
+                <i class="fas fa-chart-line fa-3x text-info mb-2"></i>
+                <h3 class="text-info mb-0">{{ "%.1f"|format(frequency) }}</h3>
+                <small class="text-muted">Entries/Day (30d)</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+        <div class="card text-center border-warning">
+            <div class="card-body">
+                <i class="fas fa-tags fa-3x text-warning mb-2"></i>
+                <h3 class="text-warning mb-0">{{ metrics.unique_tags }}</h3>
+                <small class="text-muted">Unique Tags</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Mood Analysis -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-smile me-2"></i>Mood Distribution
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if mood_breakdown %}
+                    {% for mood, count in mood_breakdown.items() %}
+                    {% set percentage = (count / total_entries * 100) %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold">{{ mood.title() }}</span>
+                            <span class="text-muted">{{ count }} ({{ "%.1f"|format(percentage) }}%)</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ percentage }}%; background: linear-gradient(45deg, #667eea, #764ba2);"
+                                 aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No mood data available yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Top Tags -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-hashtag me-2"></i>Top Tags
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if top_tags %}
+                    {% for tag, count in top_tags %}
+                    {% set max_count = top_tags[0][1] if top_tags else 1 %}
+                    {% set percentage = (count / max_count * 100) %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold">#{{ tag }}</span>
+                            <span class="badge bg-secondary">{{ count }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" role="progressbar" 
+                                 style="width: {{ percentage }}%;"
+                                 aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No tags found in your entries yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body text-center">
+                <h5 class="card-title">
+                    <i class="fas fa-tools me-2"></i>Quick Actions
+                </h5>
+                <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
+                    <a href="{{ url_for('home') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Write New Entry
+                    </a>
+                    <a href="{{ url_for('entries') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-list me-2"></i>View All Entries
+                    </a>
+                    <button class="btn btn-outline-info" onclick="window.location.reload()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh Data
+                    </button>
+                </div>
+                
+                <div class="mt-4 p-3 bg-white rounded">
+                    <h6 class="mb-2">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>Insight Tip
+                    </h6>
+                    <small class="text-muted">
+                        Track your mood daily to identify patterns and improve your well-being over time!
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Date Range Info -->
+{% if metrics.date_range %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h6 class="text-muted mb-1">Date Range</h6>
+                        <p class="mb-0">{{ metrics.date_range }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="text-muted mb-1">Unique Moods</h6>
+                        <p class="mb-0">{{ metrics.unique_moods }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="text-muted mb-1">Categories</h6>
+                        <p class="mb-0">{{ metrics.unique_categories }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

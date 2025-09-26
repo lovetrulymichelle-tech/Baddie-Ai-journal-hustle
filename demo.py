@@ -17,7 +17,14 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from baddie_journal.models import JournalEntry, InsightData  # noqa: E402
 from baddie_journal.insights import InsightsHelper  # noqa: E402
-from baddie_journal.swarms_integration import JournalAnalysisSwarm  # noqa: E402
+
+# Optional swarms integration
+try:
+    from baddie_journal.swarms_integration import JournalAnalysisSwarm  # noqa: E402
+    SWARMS_AVAILABLE = True
+except ImportError:
+    SWARMS_AVAILABLE = False
+    JournalAnalysisSwarm = None
 
 
 def create_sample_data() -> InsightData:
@@ -122,6 +129,11 @@ def demonstrate_swarms_analysis(insight_data: InsightData):
     """Demonstrate Swarms AI analysis if API key is available."""
     print("\n🤖 SWARMS AI ANALYSIS")
     print("=" * 50)
+
+    if not SWARMS_AVAILABLE:
+        print("⚠️  Swarms framework not available. Skipping AI analysis.")
+        print("   To enable AI analysis, install: pip install swarms>=6.0.0")
+        return
 
     # Check if OpenAI API key is available
     api_key = os.getenv("OPENAI_API_KEY")
