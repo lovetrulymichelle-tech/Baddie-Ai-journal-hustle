@@ -1,14 +1,18 @@
-# Database drivers and ORM
+# Core dependencies (required for web deployment)
+Flask>=2.3.0
+python-dateutil>=2.8.0
+
+# Database drivers and ORM (required for production)
 psycopg2-binary>=2.9.0
 sqlalchemy>=2.0.0
 
-# Payment processing
-stripe>=8.0.0
+# Optional dependencies for enhanced features
+# Payment processing (for subscription features)
+# stripe>=8.0.0
 
-# AI and Swarms Framework
-swarms>=6.0.0
-openai>=1.0.0
+# AI and Swarms Framework (for AI analysis features)
+# swarms>=6.0.0
+# openai>=1.0.0
 
-# Additional dependencies for journal features
-python-dateutil>=2.8.0
-pandas>=2.0.0
+# Data analysis (optional, has fallback implementation)
+# pandas>=2.0.0

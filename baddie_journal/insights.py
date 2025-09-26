@@ -8,7 +8,12 @@ and generating insights about patterns, moods, and productivity over time.
 from datetime import datetime, UTC, timedelta
 from typing import Dict, List, Tuple
 from collections import Counter
-import pandas as pd
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    pd = None
 
 from .models import InsightData
 
@@ -217,8 +222,18 @@ class InsightsHelper:
                 'hour': entry.timestamp.hour
             })
 
-        df = pd.DataFrame(entries_data)
-        df.to_csv(filename, index=False)
+        if not PANDAS_AVAILABLE:
+            # Fallback: write CSV manually if pandas is not available
+            import csv
+            with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+                if entries_data:
+                    fieldnames = entries_data[0].keys()
+                    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                    writer.writeheader()
+                    writer.writerows(entries_data)
+        else:
+            df = pd.DataFrame(entries_data)
+            df.to_csv(filename, index=False)
 
         return filename
 
