@@ -61,34 +61,6 @@ def create_sample_entries():
             )
         print(f"✅ Created {len(sample_data)} sample entries")
 
-# Sample data for demonstration - only add if no entries exist
-def create_sample_entries():
-    """Create some sample entries if none exist."""
-    if db_manager.get_entry_count() == 0:
-        sample_data = [
-            {
-                'content': "Started my morning with meditation and journaling. Feeling grateful for this new day!",
-                'mood': "grateful", 'category': "personal", 'tags': ["meditation", "gratitude", "morning"]
-            },
-            {
-                'content': "Had a productive work session today. Completed three major tasks and felt really focused.",
-                'mood': "productive", 'category': "work", 'tags': ["productivity", "focus", "achievement"]
-            },
-            {
-                'content': "Feeling a bit overwhelmed with all the upcoming deadlines. Need to prioritize better.",
-                'mood': "stressed", 'category': "work", 'tags': ["stress", "deadlines", "planning"]
-            }
-        ]
-        
-        for data in sample_data:
-            db_manager.add_entry(
-                content=data['content'],
-                mood=data['mood'],
-                category=data['category'],
-                tags=data['tags']
-            )
-        print(f"✅ Created {len(sample_data)} sample entries")
-
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'baddie-journal-demo-key-change-in-production')
 
@@ -195,15 +167,23 @@ def health():
             'app': 'Baddie AI Journal Hustle',
             'version': '0.1.0',
             'entries_count': entry_count,
-            'database': 'connected'
+            'database': 'connected',
+            'python_version': sys.version,
+            'flask_available': True,
+            'sqlalchemy_available': True if hasattr(db_manager, 'engine') else False,
+            'timestamp': datetime.now(UTC).isoformat()
         })
-    except Exception:
-        # Don't expose stack trace details in production
+    except Exception as e:
+        # Don't expose stack trace details in production, but provide debug info
+        error_info = str(e) if os.getenv('FLASK_DEBUG') == 'true' else 'Database connection error'
         return jsonify({
             'status': 'error',
             'app': 'Baddie AI Journal Hustle',
             'version': '0.1.0',
-            'error': 'Database connection error'
+            'error': error_info,
+            'python_version': sys.version,
+            'flask_available': True,
+            'timestamp': datetime.now(UTC).isoformat()
         }), 500
 
 # Error handlers
@@ -235,9 +215,11 @@ if __name__ == '__main__':
     
     print(f"🚀 Starting Baddie AI Journal Hustle on {host}:{port}")
     print(f"📖 Visit http://{host}:{port} to start journaling!")
+    print(f"🔧 Debug mode: {debug}")
+    print(f"💾 Database: {os.getenv('SQLALCHEMY_DATABASE_URI', 'SQLite (default)')[:50]}...")
     
     try:
-        app.run(host=host, port=port, debug=debug)
+        app.run(host=host, port=port, debug=debug, threaded=True)
     finally:
         # Clean up database connection
         try:
