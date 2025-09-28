@@ -11,8 +11,20 @@ from datetime import datetime, UTC
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
 
-from swarms import Agent
-from openai import OpenAI
+# Optional imports - handle gracefully if not available
+try:
+    from swarms import Agent
+    _swarms_available = True
+except ImportError:
+    Agent = None
+    _swarms_available = False
+
+try:
+    from openai import OpenAI
+    _openai_available = True
+except ImportError:
+    OpenAI = None
+    _openai_available = False
 
 from .models import InsightData
 from .insights import InsightsHelper
@@ -44,6 +56,12 @@ class JournalAnalysisSwarm:
         Args:
             api_key: OpenAI API key (optional, can use environment variable)
         """
+        if not _swarms_available:
+            raise ImportError("Swarms framework is not available. Install with: pip install swarms>=6.0.0")
+        
+        if not _openai_available:
+            raise ImportError("OpenAI package is not available. Install with: pip install openai>=1.0.0")
+        
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise ValueError("OpenAI API key is required. Set OPENAI_API_KEY environment variable "
