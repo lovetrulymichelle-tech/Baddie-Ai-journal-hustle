@@ -24,6 +24,7 @@ class JournalEntry:
         tags: List of tags associated with the entry
         timestamp: When the entry was created (stored in UTC)
     """
+
     id: int
     content: str
     mood: str
@@ -43,25 +44,25 @@ class JournalEntry:
     def to_dict(self) -> dict:
         """Convert the entry to a dictionary for serialization."""
         return {
-            'id': self.id,
-            'content': self.content,
-            'mood': self.mood,
-            'category': self.category,
-            'tags': self.tags,
-            'timestamp': self.timestamp.isoformat()
+            "id": self.id,
+            "content": self.content,
+            "mood": self.mood,
+            "category": self.category,
+            "tags": self.tags,
+            "timestamp": self.timestamp.isoformat(),
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'JournalEntry':
+    def from_dict(cls, data: dict) -> "JournalEntry":
         """Create a JournalEntry from a dictionary."""
-        timestamp = datetime.fromisoformat(data['timestamp'])
+        timestamp = datetime.fromisoformat(data["timestamp"])
         return cls(
-            id=data['id'],
-            content=data['content'],
-            mood=data['mood'],
-            category=data['category'],
-            tags=data['tags'],
-            timestamp=timestamp
+            id=data["id"],
+            content=data["content"],
+            mood=data["mood"],
+            category=data["category"],
+            tags=data["tags"],
+            timestamp=timestamp,
         )
 
 
@@ -73,6 +74,7 @@ class InsightData:
     This class holds a collection of journal entries and provides
     methods for accessing and organizing the data for insights generation.
     """
+
     entries: List[JournalEntry]
 
     def __post_init__(self):
@@ -91,11 +93,12 @@ class InsightData:
         """Get all entries that contain a specific tag."""
         return [entry for entry in self.entries if tag in entry.tags]
 
-    def get_entries_in_range(self, start_date: datetime, end_date: datetime) -> List[JournalEntry]:
+    def get_entries_in_range(
+        self, start_date: datetime, end_date: datetime
+    ) -> List[JournalEntry]:
         """Get entries within a specific date range."""
         return [
-            entry for entry in self.entries
-            if start_date <= entry.timestamp <= end_date
+            entry for entry in self.entries if start_date <= entry.timestamp <= end_date
         ]
 
     def get_unique_moods(self) -> List[str]:
@@ -124,9 +127,9 @@ class InsightData:
     def to_dict(self) -> dict:
         """Convert the insight data to a dictionary for serialization."""
         return {
-            'entries': [entry.to_dict() for entry in self.entries],
-            'total_entries': self.total_entries(),
-            'unique_moods': self.get_unique_moods(),
-            'unique_categories': self.get_unique_categories(),
-            'unique_tags': self.get_unique_tags()
+            "entries": [entry.to_dict() for entry in self.entries],
+            "total_entries": self.total_entries(),
+            "unique_moods": self.get_unique_moods(),
+            "unique_categories": self.get_unique_categories(),
+            "unique_tags": self.get_unique_tags(),
         }

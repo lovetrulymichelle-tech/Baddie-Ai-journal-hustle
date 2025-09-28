@@ -207,9 +207,10 @@ marimo/_lsp/
 __marimo__/
 
 # Application specific
-# Keep SQLite DB for local development but exclude from deployment
-# journal.db
-# test.db
+# SQLite databases should not be tracked for production deployment
+*.db
+*.sqlite
+*.sqlite3
 
 # Production deployment logs
 *.log

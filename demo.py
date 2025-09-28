@@ -21,6 +21,7 @@ from baddie_journal.insights import InsightsHelper  # noqa: E402
 # Optional swarms integration
 try:
     from baddie_journal.swarms_integration import JournalAnalysisSwarm  # noqa: E402
+
     SWARMS_AVAILABLE = True
 except ImportError:
     SWARMS_AVAILABLE = False
@@ -35,58 +36,70 @@ def create_sample_data() -> InsightData:
     entries = [
         JournalEntry(
             id=1,
-            content=("Started my day with meditation and felt really centered. Work was productive "
-                     "and I accomplished all my goals. Feeling grateful for this positive momentum."),
+            content=(
+                "Started my day with meditation and felt really centered. Work was productive "
+                "and I accomplished all my goals. Feeling grateful for this positive momentum."
+            ),
             mood="happy",
             category="personal",
             tags=["meditation", "productivity", "gratitude"],
-            timestamp=datetime.now(UTC) - timedelta(days=5)
+            timestamp=datetime.now(UTC) - timedelta(days=5),
         ),
         JournalEntry(
             id=2,
-            content=("Had a challenging day at work with lots of meetings. Felt overwhelmed "
-                     "but managed to push through. Need to work on time management."),
+            content=(
+                "Had a challenging day at work with lots of meetings. Felt overwhelmed "
+                "but managed to push through. Need to work on time management."
+            ),
             mood="stressed",
             category="work",
             tags=["meetings", "overwhelmed", "time-management"],
-            timestamp=datetime.now(UTC) - timedelta(days=4)
+            timestamp=datetime.now(UTC) - timedelta(days=4),
         ),
         JournalEntry(
             id=3,
-            content=("Great workout this morning! Ran 5k and felt amazing afterward. "
-                     "Energy levels are high and I'm motivated to tackle the day."),
+            content=(
+                "Great workout this morning! Ran 5k and felt amazing afterward. "
+                "Energy levels are high and I'm motivated to tackle the day."
+            ),
             mood="energetic",
             category="health",
             tags=["exercise", "running", "motivation"],
-            timestamp=datetime.now(UTC) - timedelta(days=3)
+            timestamp=datetime.now(UTC) - timedelta(days=3),
         ),
         JournalEntry(
             id=4,
-            content=("Spent quality time with family today. Had deep conversations and felt really "
-                     "connected. These moments are what matter most."),
+            content=(
+                "Spent quality time with family today. Had deep conversations and felt really "
+                "connected. These moments are what matter most."
+            ),
             mood="content",
             category="personal",
             tags=["family", "connection", "relationships"],
-            timestamp=datetime.now(UTC) - timedelta(days=2)
+            timestamp=datetime.now(UTC) - timedelta(days=2),
         ),
         JournalEntry(
             id=5,
-            content=("Feeling a bit down today. Not sure why, just one of those days. "
-                     "Tried to stay positive but it's been difficult."),
+            content=(
+                "Feeling a bit down today. Not sure why, just one of those days. "
+                "Tried to stay positive but it's been difficult."
+            ),
             mood="melancholy",
             category="personal",
             tags=["reflection", "emotions"],
-            timestamp=datetime.now(UTC) - timedelta(days=1)
+            timestamp=datetime.now(UTC) - timedelta(days=1),
         ),
         JournalEntry(
             id=6,
-            content=("New day, new perspective! Yesterday's mood has lifted. Started a new "
-                     "project at work and feeling excited about the possibilities."),
+            content=(
+                "New day, new perspective! Yesterday's mood has lifted. Started a new "
+                "project at work and feeling excited about the possibilities."
+            ),
             mood="optimistic",
             category="work",
             tags=["new-project", "excitement", "fresh-start"],
-            timestamp=datetime.now(UTC)
-        )
+            timestamp=datetime.now(UTC),
+        ),
     ]
 
     print(f"✅ Created {len(entries)} sample journal entries")
@@ -103,7 +116,9 @@ def demonstrate_basic_insights(insight_data: InsightData):
     # Calculate basic metrics
     print(f"📝 Current streak: {helper.calculate_streak()} days")
     print(f"📊 Total entries: {insight_data.total_entries()}")
-    print(f"📈 Average frequency (30 days): {helper.get_writing_frequency(30):.1f} entries/day")
+    print(
+        f"📈 Average frequency (30 days): {helper.get_writing_frequency(30):.1f} entries/day"
+    )
 
     # Mood breakdown
     mood_breakdown = helper.get_mood_breakdown()
@@ -157,12 +172,14 @@ def demonstrate_swarms_analysis(insight_data: InsightData):
         print("-" * 20)
         if "error" not in result.mood_analysis:
             if "dominant_moods" in result.mood_analysis:
-                print(f"Dominant moods: {', '.join(result.mood_analysis['dominant_moods'])}")
+                print(
+                    f"Dominant moods: {', '.join(result.mood_analysis['dominant_moods'])}"
+                )
             if "mood_stability" in result.mood_analysis:
                 print(f"Mood stability: {result.mood_analysis['mood_stability']}")
             if "insights" in result.mood_analysis:
                 print("Key insights:")
-                for insight in result.mood_analysis['insights']:
+                for insight in result.mood_analysis["insights"]:
                     print(f"  • {insight}")
         else:
             print(f"❌ {result.mood_analysis['error']}")
@@ -172,9 +189,13 @@ def demonstrate_swarms_analysis(insight_data: InsightData):
         print("-" * 20)
         if "error" not in result.pattern_insights:
             if "recurring_themes" in result.pattern_insights:
-                print(f"Recurring themes: {', '.join(result.pattern_insights['recurring_themes'])}")
+                print(
+                    f"Recurring themes: {', '.join(result.pattern_insights['recurring_themes'])}"
+                )
             if "writing_patterns" in result.pattern_insights:
-                print(f"Writing patterns: {result.pattern_insights['writing_patterns']}")
+                print(
+                    f"Writing patterns: {result.pattern_insights['writing_patterns']}"
+                )
         else:
             print(f"❌ {result.pattern_insights['error']}")
 
@@ -184,11 +205,11 @@ def demonstrate_swarms_analysis(insight_data: InsightData):
         if "error" not in result.personal_growth_insights:
             if "strengths" in result.personal_growth_insights:
                 print("Identified strengths:")
-                for strength in result.personal_growth_insights['strengths']:
+                for strength in result.personal_growth_insights["strengths"]:
                     print(f"  • {strength}")
             if "improvement_areas" in result.personal_growth_insights:
                 print("Areas for improvement:")
-                for area in result.personal_growth_insights['improvement_areas']:
+                for area in result.personal_growth_insights["improvement_areas"]:
                     print(f"  • {area}")
         else:
             print(f"❌ {result.personal_growth_insights['error']}")
@@ -222,7 +243,9 @@ def main():
     demonstrate_swarms_analysis(insight_data)
 
     print("\n✨ Demo completed!")
-    print("To run with your own data, create JournalEntry objects and use InsightData to wrap them.")
+    print(
+        "To run with your own data, create JournalEntry objects and use InsightData to wrap them."
+    )
     print("For AI analysis, make sure to set your OPENAI_API_KEY environment variable.")
 
 

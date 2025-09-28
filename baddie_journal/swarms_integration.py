@@ -14,6 +14,7 @@ from dataclasses import dataclass
 # Optional imports - handle gracefully if not available
 try:
     from swarms import Agent
+
     _swarms_available = True
 except ImportError:
     Agent = None
@@ -21,6 +22,7 @@ except ImportError:
 
 try:
     from openai import OpenAI
+
     _openai_available = True
 except ImportError:
     OpenAI = None
@@ -33,6 +35,7 @@ from .insights import InsightsHelper
 @dataclass
 class SwarmAnalysisResult:
     """Result from swarm analysis of journal entries."""
+
     mood_analysis: Dict[str, Any]
     pattern_insights: Dict[str, Any]
     recommendations: List[str]
@@ -57,15 +60,21 @@ class JournalAnalysisSwarm:
             api_key: OpenAI API key (optional, can use environment variable)
         """
         if not _swarms_available:
-            raise ImportError("Swarms framework is not available. Install with: pip install swarms>=6.0.0")
-        
+            raise ImportError(
+                "Swarms framework is not available. Install with: pip install swarms>=6.0.0"
+            )
+
         if not _openai_available:
-            raise ImportError("OpenAI package is not available. Install with: pip install openai>=1.0.0")
-        
+            raise ImportError(
+                "OpenAI package is not available. Install with: pip install openai>=1.0.0"
+            )
+
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         if not self.api_key:
-            raise ValueError("OpenAI API key is required. Set OPENAI_API_KEY environment variable "
-                             "or pass api_key parameter.")
+            raise ValueError(
+                "OpenAI API key is required. Set OPENAI_API_KEY environment variable "
+                "or pass api_key parameter."
+            )
 
         self.client = OpenAI(api_key=self.api_key)
         self._initialize_agents()
@@ -95,12 +104,12 @@ Remember: This is private journal data. Treat it with respect and confidentialit
                 name="Mood Analyzer",
                 description="an expert at analyzing emotional patterns and mood trends in journal entries",
                 task="Analyze journal entries to identify mood patterns, emotional triggers, "
-                     "and sentiment trends over time"
+                "and sentiment trends over time",
             ),
             model_name="gpt-4o-mini",
             max_loops=1,
             temperature=0.3,
-            openai_api_key=self.api_key
+            openai_api_key=self.api_key,
         )
 
         # Pattern Recognition Agent
@@ -109,12 +118,12 @@ Remember: This is private journal data. Treat it with respect and confidentialit
             system_prompt=self._create_system_prompt(
                 name="Pattern Recognizer",
                 description="a specialist in identifying behavioral patterns, habits, and recurring themes",
-                task="Identify patterns in writing habits, topics, timing, and behavioral trends from journal entries"
+                task="Identify patterns in writing habits, topics, timing, and behavioral trends from journal entries",
             ),
             model_name="gpt-4o-mini",
             max_loops=1,
             temperature=0.3,
-            openai_api_key=self.api_key
+            openai_api_key=self.api_key,
         )
 
         # Personal Growth Coach Agent
@@ -124,12 +133,12 @@ Remember: This is private journal data. Treat it with respect and confidentialit
                 name="Personal Growth Coach",
                 description="an expert at identifying personal development opportunities and growth insights",
                 task="Analyze journal entries to identify growth opportunities, achievements, "
-                     "and areas for personal development"
+                "and areas for personal development",
             ),
             model_name="gpt-4o-mini",
             max_loops=1,
             temperature=0.5,
-            openai_api_key=self.api_key
+            openai_api_key=self.api_key,
         )
 
         # Recommendation Agent
@@ -139,15 +148,17 @@ Remember: This is private journal data. Treat it with respect and confidentialit
                 name="Recommendation Specialist",
                 description="an expert at generating actionable recommendations based on journal analysis",
                 task="Generate personalized recommendations for improving well-being, productivity, "
-                     "and personal growth based on journal insights"
+                "and personal growth based on journal insights",
             ),
             model_name="gpt-4o-mini",
             max_loops=1,
             temperature=0.6,
-            openai_api_key=self.api_key
+            openai_api_key=self.api_key,
         )
 
-    def _prepare_journal_context(self, insight_data: InsightData, include_content: bool = False) -> str:
+    def _prepare_journal_context(
+        self, insight_data: InsightData, include_content: bool = False
+    ) -> str:
         """
         Prepare journal data context for analysis.
 
@@ -163,10 +174,16 @@ Remember: This is private journal data. Treat it with respect and confidentialit
         mood_breakdown = helper.get_mood_breakdown()
         top_tags = helper.get_top_tags(10)
 
-        earliest_date = (metrics['date_range']['earliest'][:10]
-                         if metrics['date_range']['earliest'] else 'N/A')
-        latest_date = (metrics['date_range']['latest'][:10]
-                       if metrics['date_range']['latest'] else 'N/A')
+        earliest_date = (
+            metrics["date_range"]["earliest"][:10]
+            if metrics["date_range"]["earliest"]
+            else "N/A"
+        )
+        latest_date = (
+            metrics["date_range"]["latest"][:10]
+            if metrics["date_range"]["latest"]
+            else "N/A"
+        )
 
         context = f"""
 JOURNAL ANALYSIS CONTEXT:
@@ -189,19 +206,29 @@ RECENT ENTRIES SUMMARY:
 """
 
         # Add recent entries (last 10 or all if fewer)
-        recent_entries = sorted(insight_data.entries, key=lambda x: x.timestamp, reverse=True)[:10]
+        recent_entries = sorted(
+            insight_data.entries, key=lambda x: x.timestamp, reverse=True
+        )[:10]
 
         for i, entry in enumerate(recent_entries, 1):
             if include_content:
                 # For privacy, only include first 100 characters of content
-                content_preview = entry.content[:100] + "..." if len(entry.content) > 100 else entry.content
-                timestamp_str = entry.timestamp.strftime('%Y-%m-%d %H:%M')
-                context += (f"\nEntry {i}: [{timestamp_str}] Mood: {entry.mood}, Category: {entry.category}, "
-                            f"Tags: {entry.tags}\nContent Preview: {content_preview}\n")
+                content_preview = (
+                    entry.content[:100] + "..."
+                    if len(entry.content) > 100
+                    else entry.content
+                )
+                timestamp_str = entry.timestamp.strftime("%Y-%m-%d %H:%M")
+                context += (
+                    f"\nEntry {i}: [{timestamp_str}] Mood: {entry.mood}, Category: {entry.category}, "
+                    f"Tags: {entry.tags}\nContent Preview: {content_preview}\n"
+                )
             else:
-                timestamp_str = entry.timestamp.strftime('%Y-%m-%d %H:%M')
-                context += (f"\nEntry {i}: [{timestamp_str}] Mood: {entry.mood}, Category: {entry.category}, "
-                            f"Tags: {entry.tags}\n")
+                timestamp_str = entry.timestamp.strftime("%Y-%m-%d %H:%M")
+                context += (
+                    f"\nEntry {i}: [{timestamp_str}] Mood: {entry.mood}, Category: {entry.category}, "
+                    f"Tags: {entry.tags}\n"
+                )
 
         return context
 
@@ -245,12 +272,12 @@ Provide your analysis in JSON format with the following structure:
             except json.JSONDecodeError:
                 return {
                     "analysis_text": response,
-                    "parsing_note": "Response could not be parsed as JSON"
+                    "parsing_note": "Response could not be parsed as JSON",
                 }
         except Exception as e:
             return {
                 "error": f"Mood analysis failed: {str(e)}",
-                "fallback_analysis": "Unable to perform AI mood analysis"
+                "fallback_analysis": "Unable to perform AI mood analysis",
             }
 
     def identify_behavioral_patterns(self, insight_data: InsightData) -> Dict[str, Any]:
@@ -292,12 +319,12 @@ Provide your analysis in JSON format with the following structure:
             except json.JSONDecodeError:
                 return {
                     "analysis_text": response,
-                    "parsing_note": "Response could not be parsed as JSON"
+                    "parsing_note": "Response could not be parsed as JSON",
                 }
         except Exception as e:
             return {
                 "error": f"Pattern analysis failed: {str(e)}",
-                "fallback_analysis": "Unable to perform AI pattern analysis"
+                "fallback_analysis": "Unable to perform AI pattern analysis",
             }
 
     def generate_growth_insights(self, insight_data: InsightData) -> Dict[str, Any]:
@@ -339,15 +366,17 @@ Provide your analysis in JSON format with the following structure:
             except json.JSONDecodeError:
                 return {
                     "analysis_text": response,
-                    "parsing_note": "Response could not be parsed as JSON"
+                    "parsing_note": "Response could not be parsed as JSON",
                 }
         except Exception as e:
             return {
                 "error": f"Growth analysis failed: {str(e)}",
-                "fallback_analysis": "Unable to perform AI growth analysis"
+                "fallback_analysis": "Unable to perform AI growth analysis",
             }
 
-    def generate_recommendations(self, insight_data: InsightData, previous_analyses: Dict[str, Any]) -> List[str]:
+    def generate_recommendations(
+        self, insight_data: InsightData, previous_analyses: Dict[str, Any]
+    ) -> List[str]:
         """
         Generate personalized recommendations based on all analyses.
 
@@ -390,17 +419,23 @@ Provide 5-10 specific, actionable recommendations in JSON format:
                 return result.get("recommendations", [])
             except json.JSONDecodeError:
                 # Fallback: try to extract recommendations from text
-                lines = response.split('\n')
+                lines = response.split("\n")
                 recommendations = []
                 for line in lines:
                     line = line.strip()
-                    if line and (line.startswith('-') or line.startswith('*') or line.startswith('•')):
+                    if line and (
+                        line.startswith("-")
+                        or line.startswith("*")
+                        or line.startswith("•")
+                    ):
                         recommendations.append(line[1:].strip())
                 return recommendations[:10]  # Limit to 10 recommendations
         except Exception as e:
             return [f"Unable to generate AI recommendations: {str(e)}"]
 
-    def perform_comprehensive_analysis(self, insight_data: InsightData) -> SwarmAnalysisResult:
+    def perform_comprehensive_analysis(
+        self, insight_data: InsightData
+    ) -> SwarmAnalysisResult:
         """
         Perform comprehensive analysis using all agents in the swarm.
 
@@ -419,7 +454,7 @@ Provide 5-10 specific, actionable recommendations in JSON format:
         combined_analyses = {
             "mood_analysis": mood_analysis,
             "pattern_insights": pattern_insights,
-            "growth_insights": growth_insights
+            "growth_insights": growth_insights,
         }
 
         recommendations = self.generate_recommendations(insight_data, combined_analyses)
@@ -431,5 +466,5 @@ Provide 5-10 specific, actionable recommendations in JSON format:
             recommendations=recommendations,
             emotional_trends=mood_analysis,  # Alias for backwards compatibility
             personal_growth_insights=growth_insights,
-            generated_at=datetime.now(UTC)
+            generated_at=datetime.now(UTC),
         )

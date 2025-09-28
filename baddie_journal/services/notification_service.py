@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 class NotificationType(Enum):
     """Types of notifications."""
+
     TRIAL_STARTING = "trial_starting"
     TRIAL_EXPIRING_3_DAYS = "trial_expiring_3_days"
     TRIAL_EXPIRING_1_DAY = "trial_expiring_1_day"
@@ -31,6 +32,7 @@ class NotificationType(Enum):
 @dataclass
 class NotificationTemplate:
     """Template for notification messages."""
+
     type: NotificationType
     subject: str
     message: str
@@ -41,23 +43,25 @@ class NotificationTemplate:
 class NotificationService:
     """
     Service for managing user notifications related to subscriptions.
-    
+
     Handles email notifications, in-app notifications, and upgrade prompts
     for trial expiry and subscription changes.
     """
-    
+
     def __init__(self, base_url: str = "https://app.baddiejournal.com"):
         """
         Initialize notification service.
-        
+
         Args:
             base_url: Base URL for action links in notifications
         """
-        self.base_url = base_url.rstrip('/')
+        self.base_url = base_url.rstrip("/")
         self.templates = self._load_notification_templates()
         logger.info("Notification service initialized")
-    
-    def _load_notification_templates(self) -> Dict[NotificationType, NotificationTemplate]:
+
+    def _load_notification_templates(
+        self,
+    ) -> Dict[NotificationType, NotificationTemplate]:
         """Load notification templates."""
         return {
             NotificationType.TRIAL_STARTING: NotificationTemplate(
@@ -68,16 +72,15 @@ class NotificationService:
                     "Welcome to your Baddie AI Journal journey! Your 7-day trial for just $1 is now active.\n\n"
                     "During your trial, you can:\n"
                     "• Create unlimited journal entries\n"
-                    "• Get basic insights about your mood and patterns\n" 
+                    "• Get basic insights about your mood and patterns\n"
                     "• Experience the power of AI-driven self-reflection\n\n"
                     "After 7 days, you'll automatically upgrade to our Basic plan at $9.99/month "
                     "to continue your journaling journey with full features.\n\n"
                     "Ready to start journaling like the baddie you are? Let's go! ✨"
                 ),
                 action_text="Start Journaling",
-                action_url=f"{self.base_url}/dashboard"
+                action_url=f"{self.base_url}/dashboard",
             ),
-            
             NotificationType.TRIAL_EXPIRING_3_DAYS: NotificationTemplate(
                 type=NotificationType.TRIAL_EXPIRING_3_DAYS,
                 subject="Your Baddie Trial Expires in 3 Days! ⏰",
@@ -92,10 +95,9 @@ class NotificationService:
                     "• Data export capabilities\n\n"
                     "Want to make changes to your subscription? You can manage it anytime."
                 ),
-                action_text="Manage Subscription", 
-                action_url=f"{self.base_url}/subscription"
+                action_text="Manage Subscription",
+                action_url=f"{self.base_url}/subscription",
             ),
-            
             NotificationType.TRIAL_EXPIRING_1_DAY: NotificationTemplate(
                 type=NotificationType.TRIAL_EXPIRING_1_DAY,
                 subject="Last Day of Your Baddie Trial! 🚨",
@@ -104,15 +106,14 @@ class NotificationService:
                     "Your trial ends tomorrow! We hope these past 6 days have been transformative.\n\n"
                     "Tomorrow you'll automatically upgrade to Basic ($9.99/month) so you can continue:\n"
                     "• Your daily reflection practice\n"
-                    "• Getting AI insights about your growth\n" 
+                    "• Getting AI insights about your growth\n"
                     "• Tracking your mood and patterns\n"
                     "• Building the journaling habit that serves you\n\n"
                     "Need to make changes? Click below to manage your subscription."
                 ),
                 action_text="Manage Subscription",
-                action_url=f"{self.base_url}/subscription"
+                action_url=f"{self.base_url}/subscription",
             ),
-            
             NotificationType.TRIAL_EXPIRED: NotificationTemplate(
                 type=NotificationType.TRIAL_EXPIRED,
                 subject="Welcome to Baddie Basic! Your Journey Continues 🌟",
@@ -129,9 +130,8 @@ class NotificationService:
                     "Keep journaling, keep growing, keep being the baddie you are! ✨"
                 ),
                 action_text="Continue Journaling",
-                action_url=f"{self.base_url}/dashboard"
+                action_url=f"{self.base_url}/dashboard",
             ),
-            
             NotificationType.UPGRADE_SUCCESSFUL: NotificationTemplate(
                 type=NotificationType.UPGRADE_SUCCESSFUL,
                 subject="Subscription Upgraded Successfully! 🎉",
@@ -142,9 +142,8 @@ class NotificationService:
                     "Keep being the intentional, self-aware baddie you are! 💪"
                 ),
                 action_text="Explore Features",
-                action_url=f"{self.base_url}/features"
+                action_url=f"{self.base_url}/features",
             ),
-            
             NotificationType.PAYMENT_FAILED: NotificationTemplate(
                 type=NotificationType.PAYMENT_FAILED,
                 subject="Payment Issue - Let's Fix This! 💳",
@@ -157,9 +156,8 @@ class NotificationService:
                     "Your growth journey is too important to pause! 🌱"
                 ),
                 action_text="Update Payment",
-                action_url=f"{self.base_url}/payment"
+                action_url=f"{self.base_url}/payment",
             ),
-            
             NotificationType.SUBSCRIPTION_CANCELLED: NotificationTemplate(
                 type=NotificationType.SUBSCRIPTION_CANCELLED,
                 subject="Sorry to See You Go 💔",
@@ -172,9 +170,8 @@ class NotificationService:
                     "Keep being amazing, baddie! ✨"
                 ),
                 action_text="Reactivate Subscription",
-                action_url=f"{self.base_url}/reactivate"
+                action_url=f"{self.base_url}/reactivate",
             ),
-            
             NotificationType.SUBSCRIPTION_REACTIVATED: NotificationTemplate(
                 type=NotificationType.SUBSCRIPTION_REACTIVATED,
                 subject="Welcome Back, Baddie! 🎉",
@@ -185,27 +182,29 @@ class NotificationService:
                     "Let's continue building those amazing habits and insights! ✨"
                 ),
                 action_text="Start Journaling",
-                action_url=f"{self.base_url}/dashboard"
-            )
+                action_url=f"{self.base_url}/dashboard",
+            ),
         }
-    
-    def should_send_trial_notification(self, subscription: Subscription) -> Optional[NotificationType]:
+
+    def should_send_trial_notification(
+        self, subscription: Subscription
+    ) -> Optional[NotificationType]:
         """
         Check if a trial notification should be sent.
-        
+
         Args:
             subscription: Subscription to check
-            
+
         Returns:
             NotificationType if notification should be sent, None otherwise
         """
         if subscription.status != SubscriptionStatus.TRIAL:
             return None
-        
+
         days_left = subscription.days_until_trial_end
         if days_left is None:
             return None
-        
+
         # Send notifications at specific intervals
         if days_left >= 3 and days_left < 4:
             return NotificationType.TRIAL_EXPIRING_3_DAYS
@@ -213,43 +212,47 @@ class NotificationService:
             return NotificationType.TRIAL_EXPIRING_1_DAY
         elif days_left <= 0:
             return NotificationType.TRIAL_EXPIRED
-        
+
         return None
-    
-    def get_notification_content(self, notification_type: NotificationType) -> NotificationTemplate:
+
+    def get_notification_content(
+        self, notification_type: NotificationType
+    ) -> NotificationTemplate:
         """
         Get notification content for a specific type.
-        
+
         Args:
             notification_type: Type of notification
-            
+
         Returns:
             NotificationTemplate with content
         """
         return self.templates.get(notification_type)
-    
+
     def send_notification(
-        self, 
-        user: User, 
-        notification_type: NotificationType, 
-        additional_context: Optional[Dict[str, Any]] = None
+        self,
+        user: User,
+        notification_type: NotificationType,
+        additional_context: Optional[Dict[str, Any]] = None,
     ) -> bool:
         """
         Send notification to user.
-        
+
         Args:
             user: User to send notification to
             notification_type: Type of notification
             additional_context: Additional context for notification
-            
+
         Returns:
             True if notification sent successfully, False otherwise
         """
         template = self.get_notification_content(notification_type)
         if not template:
-            logger.error(f"No template found for notification type: {notification_type}")
+            logger.error(
+                f"No template found for notification type: {notification_type}"
+            )
             return False
-        
+
         # In a real implementation, you would send actual email/SMS/push notifications
         # For now, we'll just log the notification
         logger.info(
@@ -257,62 +260,66 @@ class NotificationService:
         )
         logger.info(f"Subject: {template.subject}")
         logger.info(f"Message: {template.message[:100]}...")
-        
+
         if template.action_url:
             logger.info(f"Action URL: {template.action_url}")
-        
+
         # Here you would integrate with:
         # - Email service (SendGrid, Mailgun, SES)
         # - SMS service (Twilio)
         # - Push notification service
         # - In-app notification system
-        
+
         return True
-    
-    def send_trial_starting_notification(self, user: User, subscription: Subscription) -> bool:
+
+    def send_trial_starting_notification(
+        self, user: User, subscription: Subscription
+    ) -> bool:
         """Send notification when trial starts."""
         return self.send_notification(
-            user, 
-            NotificationType.TRIAL_STARTING,
-            {'subscription_id': subscription.id}
+            user, NotificationType.TRIAL_STARTING, {"subscription_id": subscription.id}
         )
-    
+
     def send_upgrade_notification(self, user: User, subscription: Subscription) -> bool:
         """Send notification when subscription is upgraded."""
         return self.send_notification(
             user,
             NotificationType.UPGRADE_SUCCESSFUL,
-            {'subscription_id': subscription.id}
+            {"subscription_id": subscription.id},
         )
-    
-    def send_payment_failed_notification(self, user: User, subscription: Subscription) -> bool:
+
+    def send_payment_failed_notification(
+        self, user: User, subscription: Subscription
+    ) -> bool:
         """Send notification when payment fails."""
         return self.send_notification(
-            user,
-            NotificationType.PAYMENT_FAILED,
-            {'subscription_id': subscription.id}
+            user, NotificationType.PAYMENT_FAILED, {"subscription_id": subscription.id}
         )
-    
-    def send_cancellation_notification(self, user: User, subscription: Subscription) -> bool:
+
+    def send_cancellation_notification(
+        self, user: User, subscription: Subscription
+    ) -> bool:
         """Send notification when subscription is cancelled."""
         return self.send_notification(
             user,
             NotificationType.SUBSCRIPTION_CANCELLED,
-            {'subscription_id': subscription.id}
+            {"subscription_id": subscription.id},
         )
-    
-    def check_and_send_trial_notifications(self, subscriptions: List[Subscription]) -> List[str]:
+
+    def check_and_send_trial_notifications(
+        self, subscriptions: List[Subscription]
+    ) -> List[str]:
         """
         Check multiple subscriptions and send appropriate trial notifications.
-        
+
         Args:
             subscriptions: List of subscriptions to check
-            
+
         Returns:
             List of subscription IDs for which notifications were sent
         """
         notifications_sent = []
-        
+
         for subscription in subscriptions:
             notification_type = self.should_send_trial_notification(subscription)
             if notification_type:
@@ -322,5 +329,5 @@ class NotificationService:
                     f"Should send {notification_type.value} notification for subscription {subscription.id}"
                 )
                 notifications_sent.append(subscription.id)
-        
+
         return notifications_sent

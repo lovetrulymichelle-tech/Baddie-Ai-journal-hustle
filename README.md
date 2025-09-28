@@ -1,3 +1,7 @@
+# Baddie AI Journal Hustle
+
+[![CI](https://github.com/lovetrulymichelle-tech/Baddie-Ai-journal-hustle/actions/workflows/ci.yml/badge.svg)](https://github.com/lovetrulymichelle-tech/Baddie-Ai-journal-hustle/actions/workflows/ci.yml)
+
 ## 🆕 Swarms AI Integration
 
 Baddie AI Journal Hustle now features **Swarms AI integration** for advanced journal analysis using multiple specialized AI agents!
@@ -104,6 +108,66 @@ print("💡 AI Recommendations:", result.recommendations)
 ### Export & Privacy
 - You can export your insights as a CSV.
 - Analytics are private and visible only to you.
+
+---
+
+## 🐳 Docker Deployment
+
+You can containerize the application using Docker for consistent deployment across environments.
+
+### Building the Docker Image
+
+```bash
+# Build the Docker image
+docker build -t baddie-journal .
+
+# Run the container locally
+docker run -p 8000:8000 \
+  -e SECRET_KEY=your-secret-key \
+  -e FLASK_DEBUG=false \
+  -e SQLALCHEMY_DATABASE_URI=postgresql://user:pass@host:port/db \
+  baddie-journal
+```
+
+### Environment Variables for Docker
+
+Set these environment variables when running the container:
+
+- `SECRET_KEY`: A secure random string for session security
+- `FLASK_DEBUG`: Set to `false` for production
+- `SQLALCHEMY_DATABASE_URI`: Database connection string (PostgreSQL for production)
+- `PORT`: Port to bind (default: 8000)
+
+### Docker Compose Example
+
+```yaml
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=your-secure-secret-key
+      - FLASK_DEBUG=false
+      - SQLALCHEMY_DATABASE_URI=postgresql://user:pass@host:port/db
+    depends_on:
+      - db
+  
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=journal
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+```
+
+The application will be available at `http://localhost:8000`.
 
 ---
 
