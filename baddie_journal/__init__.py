@@ -17,6 +17,7 @@ from .insights import InsightsHelper
 # Optional imports - make them available only if dependencies are installed
 try:
     from .swarms_integration import JournalAnalysisSwarm, SwarmAnalysisResult
+
     _swarms_available = True
 except ImportError:
     _swarms_available = False
@@ -25,6 +26,7 @@ except ImportError:
 
 try:
     from .services import StripeService, NotificationService, SubscriptionService
+
     _services_available = True
 except ImportError:
     _services_available = False
@@ -34,8 +36,12 @@ except ImportError:
 
 # Dynamic __all__ based on available components
 __all__ = [
-    "JournalEntry", "InsightData", "User", "Subscription", "SubscriptionPlan",
-    "InsightsHelper"
+    "JournalEntry",
+    "InsightData",
+    "User",
+    "Subscription",
+    "SubscriptionPlan",
+    "InsightsHelper",
 ]
 
 if _swarms_available:

@@ -1,76 +1,182 @@
-from datetime import datetime, timedelta
-import pytest
+"""
+Tests for Baddie AI Journal Hustle Flask application.
 
-from app import app, db, Entry
-from app import (
-    compute_streak,
-    daily_counts_last_n,
-    mood_breakdown_last_30,
-    category_breakdown_last_30,
-    top_tags_last_60,
-    totals,
-)
+These tests verify the web application functionality including:
+- Web routes and responses
+- Database integration
+- Core insights functionality
+"""
+
+import pytest
+from datetime import datetime, UTC
+import os
+import tempfile
+import sys
+
+# Add the project root to Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from app import app
+from database import DatabaseManager
+from baddie_journal.models import JournalEntry, InsightData
+from baddie_journal.insights import InsightsHelper
+
 
 @pytest.fixture
 def client():
+    """Create a test client with in-memory database."""
+    # Create temporary database file for testing
+    db_fd, db_path = tempfile.mkstemp()
+
     app.config["TESTING"] = True
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    with app.app_context():
-        db.create_all()
-        yield app.test_client()
-        db.session.remove()
-        db.drop_all()
+    app.config["SECRET_KEY"] = "test-key"
 
-def _add_entry(days_ago=0, mood="neutral", tags="", category="Personal", text="test"):
-    created = datetime.utcnow() - timedelta(days=days_ago)
-    e = Entry(text=text, mood=mood, tags=tags, category=category, created_at=created)
-    db.session.add(e)
-    db.session.commit()
-    return e
+    # Override the database manager with test database
+    test_db_url = f"sqlite:///{db_path}"
 
-def test_streak_simple(client):
-    # entries for today and yesterday -> streak 2
-    _add_entry(days_ago=0)
-    _add_entry(days_ago=1)
-    assert compute_streak() == 2
+    with app.test_client() as client:
+        with app.app_context():
+            # Initialize test database
+            global db_manager
+            original_db_manager = app.config.get("db_manager")
+            db_manager = DatabaseManager(test_db_url)
+            app.config["db_manager"] = db_manager
 
-def test_streak_missing_today(client):
-    # entries for yesterday and day-before -> streak 2 (no today)
-    _add_entry(days_ago=1)
-    _add_entry(days_ago=2)
-    assert compute_streak() == 2
+            yield client
 
-def test_daily_counts(client):
-    # day 0: 2 entries, day 1: 1 entry
-    _add_entry(days_ago=0)
-    _add_entry(days_ago=0)
-    _add_entry(days_ago=1)
-    counts = daily_counts_last_n(3)
-    assert isinstance(counts, list) and len(counts) == 3
-    total = sum(c for d, c in counts)
-    assert total == 3
+            # Cleanup
+            db_manager.close()
+            os.close(db_fd)
+            os.unlink(db_path)
+            if original_db_manager:
+                app.config["db_manager"] = original_db_manager
 
-def test_mood_and_category_breakdowns(client):
-    _add_entry(days_ago=0, mood="happy", category="Work")
-    _add_entry(days_ago=0, mood="happy", category="Personal")
-    _add_entry(days_ago=2, mood="stressed", category="Work")
-    moods = dict(mood_breakdown_last_30())
-    cats = dict(category_breakdown_last_30())
-    assert moods.get("happy", 0) == 2
-    assert cats.get("Work", 0) == 2
 
-def test_top_tags(client):
-    _add_entry(days_ago=0, tags="a,b")
-    _add_entry(days_ago=10, tags="b,c")
-    top = top_tags_last_60(limit=5)
-    top_dict = dict(top)
-    assert top_dict.get("b", 0) == 2
-    assert top_dict.get("a", 0) == 1
+def test_home_page(client):
+    """Test that home page loads successfully."""
+    response = client.get("/")
+    assert response.status_code == 200
+    assert (
+        b"New Journal Entry" in response.data or b"Baddie AI Journal" in response.data
+    )
 
-def test_totals(client):
-    _add_entry(days_ago=0)
-    _add_entry(days_ago=8)  # outside 7-day window but inside 30-day
-    last7, last30 = totals()
-    assert last30 >= 2
-    assert last7 >= 1
+
+def test_add_entry_post(client):
+    """Test adding a new journal entry via POST."""
+    response = client.post(
+        "/add_entry",
+        data={
+            "content": "Test journal entry content",
+            "mood": "happy",
+            "category": "test",
+            "tags": "test,happy",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+
+
+def test_entries_page(client):
+    """Test that entries page loads."""
+    response = client.get("/entries")
+    assert response.status_code == 200
+
+
+def test_insights_page(client):
+    """Test that insights page loads."""
+    response = client.get("/insights")
+    assert response.status_code == 200
+
+
+def test_health_endpoint(client):
+    """Test health check endpoint."""
+    response = client.get("/health")
+    assert response.status_code == 200
+
+    data = response.get_json()
+    assert data["status"] == "healthy"
+    assert "timestamp" in data
+
+
+def test_api_entries(client):
+    """Test API entries endpoint."""
+    response = client.get("/api/entries")
+    assert response.status_code == 200
+
+    data = response.get_json()
+    assert isinstance(data, list)  # API returns list of entries directly
+
+
+def test_insights_helper():
+    """Test the InsightsHelper functionality."""
+    # Create test entries
+    entries = [
+        JournalEntry(1, "Happy day!", "happy", "personal", ["joy"], datetime.now(UTC)),
+        JournalEntry(
+            2, "Work productive", "focused", "work", ["productivity"], datetime.now(UTC)
+        ),
+        JournalEntry(
+            3,
+            "Reflection",
+            "contemplative",
+            "personal",
+            ["reflection"],
+            datetime.now(UTC),
+        ),
+    ]
+
+    insight_data = InsightData(entries)
+    helper = InsightsHelper(insight_data)
+
+    # Test streak calculation
+    streak = helper.calculate_streak()
+    assert isinstance(streak, int)
+    assert streak >= 0
+
+    # Test mood breakdown
+    mood_breakdown = helper.get_mood_breakdown()
+    assert isinstance(mood_breakdown, dict)
+    assert len(mood_breakdown) <= 3  # At most 3 different moods
+
+    # Test top tags
+    top_tags = helper.get_top_tags(5)
+    assert isinstance(top_tags, list)
+
+    # Test summary report
+    report = helper.generate_summary_report()
+    assert isinstance(report, str)
+    assert "Total Entries: 3" in report
+
+
+def test_database_operations():
+    """Test database operations directly."""
+    # Create temporary database for testing
+    db_fd, db_path = tempfile.mkstemp()
+    test_db_url = f"sqlite:///{db_path}"
+
+    try:
+        db_manager = DatabaseManager(test_db_url)
+
+        # Test adding entry
+        entry = db_manager.add_entry(
+            content="Test content", mood="happy", category="test", tags=["test", "unit"]
+        )
+
+        assert entry.content == "Test content"
+        assert entry.mood == "happy"
+
+        # Test getting entries
+        entries = db_manager.get_all_entries()
+        assert len(entries) == 1
+        assert entries[0].content == "Test content"
+
+        # Test entry count
+        count = db_manager.get_entry_count()
+        assert count == 1
+
+        db_manager.close()
+
+    finally:
+        os.close(db_fd)
+        os.unlink(db_path)

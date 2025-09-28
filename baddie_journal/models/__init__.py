@@ -9,10 +9,4 @@ This package contains all data models:
 from .journal import JournalEntry, InsightData
 from .subscription import User, Subscription, SubscriptionPlan
 
-__all__ = [
-    "JournalEntry", 
-    "InsightData", 
-    "User", 
-    "Subscription", 
-    "SubscriptionPlan"
-]
+__all__ = ["JournalEntry", "InsightData", "User", "Subscription", "SubscriptionPlan"]

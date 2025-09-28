@@ -8,11 +8,7 @@ This package contains business logic services:
 """
 
 from .stripe_service import StripeService
-from .notification_service import NotificationService  
+from .notification_service import NotificationService
 from .subscription_service import SubscriptionService
 
-__all__ = [
-    "StripeService",
-    "NotificationService", 
-    "SubscriptionService"
-]
+__all__ = ["StripeService", "NotificationService", "SubscriptionService"]

@@ -22,16 +22,15 @@ from sqlalchemy.exc import SQLAlchemyError
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
 
 def validate_environment():
     """Validate required environment variables are set."""
-    src_uri = os.getenv('SQLALCHEMY_DATABASE_URI_SRC')
-    dst_uri = os.getenv('SQLALCHEMY_DATABASE_URI_DST')
+    src_uri = os.getenv("SQLALCHEMY_DATABASE_URI_SRC")
+    dst_uri = os.getenv("SQLALCHEMY_DATABASE_URI_DST")
 
     if not src_uri:
         logger.error("SQLALCHEMY_DATABASE_URI_SRC environment variable not set")
@@ -41,11 +40,11 @@ def validate_environment():
         logger.error("SQLALCHEMY_DATABASE_URI_DST environment variable not set")
         return False, None, None
 
-    if not src_uri.startswith('sqlite://'):
+    if not src_uri.startswith("sqlite://"):
         logger.error("Source URI must be a SQLite database (sqlite://)")
         return False, None, None
 
-    if not dst_uri.startswith('postgresql://'):
+    if not dst_uri.startswith("postgresql://"):
         logger.error("Destination URI must be a PostgreSQL database (postgresql://)")
         return False, None, None
 
@@ -100,12 +99,20 @@ def migrate_data(src_uri, dst_uri, dry_run=False):
 
             if src_count == 0:
                 logger.info(f"  Skipping empty table: {table_name}")
-                migration_summary[table_name] = {'source': 0, 'migrated': 0, 'status': 'skipped'}
+                migration_summary[table_name] = {
+                    "source": 0,
+                    "migrated": 0,
+                    "status": "skipped",
+                }
                 continue
 
             if dry_run:
                 logger.info(f"  [DRY RUN] Would migrate {src_count} rows")
-                migration_summary[table_name] = {'source': src_count, 'migrated': 0, 'status': 'dry_run'}
+                migration_summary[table_name] = {
+                    "source": src_count,
+                    "migrated": 0,
+                    "status": "dry_run",
+                }
                 continue
 
             # Perform actual migration
@@ -123,44 +130,52 @@ def migrate_data(src_uri, dst_uri, dry_run=False):
                             table.create(checkfirst=True)
 
                             # Insert rows
-                            dst_conn.execute(table.insert(), [dict(row._mapping) for row in rows])
+                            dst_conn.execute(
+                                table.insert(), [dict(row._mapping) for row in rows]
+                            )
                             dst_conn.commit()
 
                         logger.info(f"  Successfully migrated {len(rows)} rows")
                         migration_summary[table_name] = {
-                            'source': src_count,
-                            'migrated': len(rows),
-                            'status': 'success'
+                            "source": src_count,
+                            "migrated": len(rows),
+                            "status": "success",
                         }
                     else:
                         migration_summary[table_name] = {
-                            'source': src_count,
-                            'migrated': 0,
-                            'status': 'no_data'
+                            "source": src_count,
+                            "migrated": 0,
+                            "status": "no_data",
                         }
 
             except SQLAlchemyError as e:
                 logger.error(f"  Failed to migrate table {table_name}: {e}")
                 migration_summary[table_name] = {
-                    'source': src_count,
-                    'migrated': 0,
-                    'status': 'error',
-                    'error': str(e)
+                    "source": src_count,
+                    "migrated": 0,
+                    "status": "error",
+                    "error": str(e),
                 }
 
         # Print migration summary
         logger.info("\nMigration Summary:")
         logger.info("=" * 50)
         for table_name, summary in migration_summary.items():
-            status = summary['status']
-            if status == 'success':
-                logger.info(f"{table_name}: {summary['migrated']}/{summary['source']} rows migrated successfully")
-            elif status == 'dry_run':
-                logger.info(f"{table_name}: {summary['source']} rows ready for migration (dry run)")
-            elif status == 'skipped':
+            status = summary["status"]
+            if status == "success":
+                logger.info(
+                    f"{table_name}: {summary['migrated']}/{summary['source']} rows migrated successfully"
+                )
+            elif status == "dry_run":
+                logger.info(
+                    f"{table_name}: {summary['source']} rows ready for migration (dry run)"
+                )
+            elif status == "skipped":
                 logger.info(f"{table_name}: Skipped (empty table)")
-            elif status == 'error':
-                logger.error(f"{table_name}: Migration failed - {summary.get('error', 'Unknown error')}")
+            elif status == "error":
+                logger.error(
+                    f"{table_name}: Migration failed - {summary.get('error', 'Unknown error')}"
+                )
 
         return True
 
@@ -178,9 +193,9 @@ def main():
         description="Migrate journal data from SQLite to PostgreSQL"
     )
     parser.add_argument(
-        '--dry-run',
-        action='store_true',
-        help='Perform a dry run without actually migrating data'
+        "--dry-run",
+        action="store_true",
+        help="Perform a dry run without actually migrating data",
     )
 
     args = parser.parse_args()
@@ -209,5 +224,5 @@ def main():
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

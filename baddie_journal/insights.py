@@ -8,8 +8,10 @@ and generating insights about patterns, moods, and productivity over time.
 from datetime import datetime, UTC, timedelta
 from typing import Dict, List, Tuple
 from collections import Counter
+
 try:
     import pandas as pd
+
     PANDAS_AVAILABLE = True
 except ImportError:
     PANDAS_AVAILABLE = False
@@ -82,7 +84,7 @@ class InsightsHelper:
         # Count entries by date
         daily_counts = {}
         for entry in relevant_entries:
-            date_key = entry.timestamp.strftime('%Y-%m-%d')
+            date_key = entry.timestamp.strftime("%Y-%m-%d")
             daily_counts[date_key] = daily_counts.get(date_key, 0) + 1
 
         return daily_counts
@@ -153,7 +155,7 @@ class InsightsHelper:
         mood_trends = {}
         for entry in relevant_entries:
             mood = entry.mood
-            date_key = entry.timestamp.strftime('%Y-%m-%d')
+            date_key = entry.timestamp.strftime("%Y-%m-%d")
 
             if mood not in mood_trends:
                 mood_trends[mood] = {}
@@ -179,19 +181,25 @@ class InsightsHelper:
             Dictionary containing various metrics
         """
         return {
-            'total_entries': self.data.total_entries(),
-            'unique_moods': len(self.data.get_unique_moods()),
-            'unique_categories': len(self.data.get_unique_categories()),
-            'unique_tags': len(self.data.get_unique_tags()),
-            'total_tags': len(self.data.get_all_tags()),
-            'current_streak': self.calculate_streak(),
-            'average_frequency_30_days': self.get_writing_frequency(30),
-            'date_range': {
-                'earliest': (min(entry.timestamp for entry in self.data.entries).isoformat()
-                             if self.data.entries else None),
-                'latest': (max(entry.timestamp for entry in self.data.entries).isoformat()
-                           if self.data.entries else None)
-            }
+            "total_entries": self.data.total_entries(),
+            "unique_moods": len(self.data.get_unique_moods()),
+            "unique_categories": len(self.data.get_unique_categories()),
+            "unique_tags": len(self.data.get_unique_tags()),
+            "total_tags": len(self.data.get_all_tags()),
+            "current_streak": self.calculate_streak(),
+            "average_frequency_30_days": self.get_writing_frequency(30),
+            "date_range": {
+                "earliest": (
+                    min(entry.timestamp for entry in self.data.entries).isoformat()
+                    if self.data.entries
+                    else None
+                ),
+                "latest": (
+                    max(entry.timestamp for entry in self.data.entries).isoformat()
+                    if self.data.entries
+                    else None
+                ),
+            },
         }
 
     def export_to_csv(self, filename: str = None) -> str:
@@ -205,27 +213,30 @@ class InsightsHelper:
             Path to the created CSV file
         """
         if filename is None:
-            timestamp = datetime.now(UTC).strftime('%Y%m%d_%H%M%S')
+            timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
             filename = f"journal_insights_{timestamp}.csv"
 
         # Convert entries to DataFrame
         entries_data = []
         for entry in self.data.entries:
-            entries_data.append({
-                'id': entry.id,
-                'content': entry.content,
-                'mood': entry.mood,
-                'category': entry.category,
-                'tags': ', '.join(entry.tags),
-                'timestamp': entry.timestamp.isoformat(),
-                'date': entry.timestamp.strftime('%Y-%m-%d'),
-                'hour': entry.timestamp.hour
-            })
+            entries_data.append(
+                {
+                    "id": entry.id,
+                    "content": entry.content,
+                    "mood": entry.mood,
+                    "category": entry.category,
+                    "tags": ", ".join(entry.tags),
+                    "timestamp": entry.timestamp.isoformat(),
+                    "date": entry.timestamp.strftime("%Y-%m-%d"),
+                    "hour": entry.timestamp.hour,
+                }
+            )
 
         if not PANDAS_AVAILABLE:
             # Fallback: write CSV manually if pandas is not available
             import csv
-            with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+
+            with open(filename, "w", newline="", encoding="utf-8") as csvfile:
                 if entries_data:
                     fieldnames = entries_data[0].keys()
                     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -254,7 +265,9 @@ class InsightsHelper:
         # Basic metrics
         report.append(f"Total Entries: {metrics['total_entries']}")
         report.append(f"Current Streak: {metrics['current_streak']} days")
-        report.append(f"Average Frequency (30 days): {metrics['average_frequency_30_days']:.1f} entries/day")
+        report.append(
+            f"Average Frequency (30 days): {metrics['average_frequency_30_days']:.1f} entries/day"
+        )
         report.append(f"Unique Moods: {metrics['unique_moods']}")
         report.append(f"Unique Categories: {metrics['unique_categories']}")
         report.append(f"Unique Tags: {metrics['unique_tags']}")
@@ -263,8 +276,10 @@ class InsightsHelper:
         # Mood breakdown
         if mood_breakdown:
             report.append("Mood Distribution:")
-            for mood, count in sorted(mood_breakdown.items(), key=lambda x: x[1], reverse=True):
-                percentage = (count / metrics['total_entries']) * 100
+            for mood, count in sorted(
+                mood_breakdown.items(), key=lambda x: x[1], reverse=True
+            ):
+                percentage = (count / metrics["total_entries"]) * 100
                 report.append(f"  {mood}: {count} entries ({percentage:.1f}%)")
             report.append("")
 
@@ -276,9 +291,9 @@ class InsightsHelper:
             report.append("")
 
         # Date range
-        if metrics['date_range']['earliest']:
-            earliest = metrics['date_range']['earliest'][:10]
-            latest = metrics['date_range']['latest'][:10]
+        if metrics["date_range"]["earliest"]:
+            earliest = metrics["date_range"]["earliest"][:10]
+            latest = metrics["date_range"]["latest"][:10]
             report.append(f"Date Range: {earliest} to {latest}")
 
         return "\n".join(report)

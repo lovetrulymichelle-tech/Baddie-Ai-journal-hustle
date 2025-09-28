@@ -1,0 +1,97 @@
+# Git and version control
+.git
+.gitignore
+README.md
+*.md
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.pytest_cache
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+
+# Virtual environments
+venv
+env
+ENV
+.venv
+
+# Development and testing
+.pytest_cache
+tests/
+test_*.py
+*_test.py
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+journal.db
+test.db
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Local configuration
+.env
+.env.local
+.env.*.local
+
+# Documentation generation
+docs/_build/
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# CI/CD
+.github/
+.travis.yml
+.circleci/
+
+# Deployment artifacts
+*.tar.gz
+*.zip
+
+# Node modules (if any)
+node_modules/
+
+# Application specific
+agent_workspace/
+DEPLOYMENT_*.md
+CONFLICTS_*.md
+QUICK_*.md
+DOMAIN-*.md
+SUBSCRIPTION.md

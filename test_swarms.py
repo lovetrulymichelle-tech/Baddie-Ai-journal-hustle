@@ -21,7 +21,7 @@ def test_models():
         mood="happy",
         category="test",
         tags=["testing", "demo"],
-        timestamp=datetime.now(UTC)
+        timestamp=datetime.now(UTC),
     )
 
     assert entry.id == 1
@@ -46,10 +46,22 @@ def test_insights():
     # Create test data
     entries = [
         JournalEntry(1, "Happy day", "happy", "personal", ["joy"], datetime.now(UTC)),
-        JournalEntry(2, "Productive work", "focused", "work", ["productivity"],
-                     datetime.now(UTC) - timedelta(days=1)),
-        JournalEntry(3, "Reflection time", "contemplative", "personal", ["reflection"],
-                     datetime.now(UTC) - timedelta(days=2))
+        JournalEntry(
+            2,
+            "Productive work",
+            "focused",
+            "work",
+            ["productivity"],
+            datetime.now(UTC) - timedelta(days=1),
+        ),
+        JournalEntry(
+            3,
+            "Reflection time",
+            "contemplative",
+            "personal",
+            ["reflection"],
+            datetime.now(UTC) - timedelta(days=2),
+        ),
     ]
 
     insight_data = InsightData(entries)
@@ -87,6 +99,7 @@ def test_swarms_import():
     try:
         # Test that we can import and create a swarm (without API key)
         from baddie_journal import JournalAnalysisSwarm
+
         print("  ✅ JournalAnalysisSwarm import successful")
 
         # Test that it properly handles missing API key
@@ -123,6 +136,7 @@ def main():
     except Exception as e:
         print(f"❌ Test failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
