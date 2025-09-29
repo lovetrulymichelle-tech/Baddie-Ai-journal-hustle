@@ -179,6 +179,14 @@ def health():
     """Health check endpoint for deployment platforms."""
     try:
         entry_count = db_manager.get_entry_count()
+        
+        # Detect if running in serverless environment
+        is_serverless = (
+            os.getenv('VERCEL') == '1' or 
+            os.getenv('AWS_LAMBDA_FUNCTION_NAME') is not None or
+            app.config.get('SERVERLESS', False)
+        )
+        
         return jsonify(
             {
                 "status": "healthy",
@@ -188,6 +196,8 @@ def health():
                 "database": "connected",
                 "python_version": sys.version,
                 "flask_available": True,
+                "serverless": is_serverless,
+                "platform": os.getenv('VERCEL_ENV', 'unknown'),
                 "sqlalchemy_available": (
                     True if hasattr(db_manager, "engine") else False
                 ),
@@ -201,6 +211,13 @@ def health():
             if os.getenv("FLASK_DEBUG") == "true"
             else "Database connection error"
         )
+        
+        is_serverless = (
+            os.getenv('VERCEL') == '1' or 
+            os.getenv('AWS_LAMBDA_FUNCTION_NAME') is not None or
+            app.config.get('SERVERLESS', False)
+        )
+        
         return (
             jsonify(
                 {
@@ -210,6 +227,8 @@ def health():
                     "error": error_info,
                     "python_version": sys.version,
                     "flask_available": True,
+                    "serverless": is_serverless,
+                    "platform": os.getenv('VERCEL_ENV', 'unknown'),
                     "timestamp": datetime.now(UTC).isoformat(),
                 }
             ),
@@ -241,7 +260,7 @@ def close_db(error):
     """Clean up database connections on app teardown."""
     try:
         db_manager.close()
-    except:
+    except Exception:
         pass
 
 
@@ -264,5 +283,5 @@ if __name__ == "__main__":
         # Clean up database connection
         try:
             db_manager.close()
-        except:
+        except Exception:
             pass
