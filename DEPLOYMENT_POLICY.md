@@ -48,6 +48,19 @@ The following deployment methods were removed to prevent dual deployments:
 - Set up monitoring alerts for your chosen platform only
 - Regularly verify only one instance is running
 
+## Verification Script
+
+To verify your repository has a single deployment configuration:
+
+```bash
+python verify_single_deployment.py
+```
+
+This script will check for:
+- ✅ Required Railway deployment files (Procfile, app.py, requirements.txt)
+- ❌ Conflicting deployment files (Dockerfile, vercel.json, etc.)
+- ✅ Deployment policy documentation
+
 ---
 
 **Remember: One application, one deployment, one platform.**
