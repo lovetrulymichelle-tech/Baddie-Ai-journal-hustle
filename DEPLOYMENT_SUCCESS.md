@@ -2,7 +2,11 @@
 
 ## ✅ DEPLOYMENT READY!
 
-The application is now ready for deployment to Railway or any other cloud platform. All blocking issues have been resolved.
+The application is now ready for deployment to Railway. All blocking issues have been resolved.
+
+## ⚠️ IMPORTANT: Single Deployment Policy
+
+**This application should only be deployed to ONE platform at a time** to avoid having multiple journal instances running simultaneously. The repository is configured specifically for Railway deployment.
 
 ## What Was Fixed
 
@@ -22,7 +26,7 @@ The application is now ready for deployment to Railway or any other cloud platfo
 
 ## Deployment Instructions
 
-### Option 1: Quick Deploy to Railway (Recommended)
+### Railway Deployment (Only Supported Method)
 
 1. **Connect Repository to Railway:**
    - Visit [railway.app](https://railway.app)
@@ -43,8 +47,9 @@ The application is now ready for deployment to Railway or any other cloud platfo
 4. **Deploy:**
    - Railway will automatically detect `Procfile` and deploy
    - Visit the provided URL to access your journal
+   - **⚠️ DO NOT deploy to other platforms simultaneously**
 
-### Option 2: Local Testing (When Network Issues Resolve)
+### Local Testing Only
 
 ```bash
 # Install dependencies
