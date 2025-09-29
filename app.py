@@ -24,22 +24,29 @@ from baddie_journal.models import JournalEntry, InsightData
 from baddie_journal.insights import InsightsHelper
 from database import DatabaseManager
 
-# Initialize database manager
-try:
-    db_manager = DatabaseManager()
-    print("✅ Database manager initialized successfully")
-except Exception:
-    print("⚠️ Database initialization error - using fallback storage")
-    # Fallback to in-memory storage
-    from database import DatabaseManager
+# Global database manager instance (initialized lazily)
+db_manager = None
 
-    db_manager = DatabaseManager()
+
+def get_db_manager():
+    """Get or initialize the database manager (lazy initialization for serverless)."""
+    global db_manager
+    if db_manager is None:
+        try:
+            db_manager = DatabaseManager()
+            print("✅ Database manager initialized successfully")
+        except Exception as e:
+            print(f"⚠️ Database initialization error: {e}")
+            # Fallback to in-memory storage
+            db_manager = DatabaseManager()
+    return db_manager
 
 
 # Sample data for demonstration - only add if no entries exist
 def create_sample_entries():
     """Create some sample entries if none exist."""
-    if db_manager.get_entry_count() == 0:
+    db = get_db_manager()
+    if db.get_entry_count() == 0:
         sample_data = [
             {
                 "content": "Started my morning with meditation and journaling. Feeling grateful for this new day!",
@@ -62,7 +69,7 @@ def create_sample_entries():
         ]
 
         for data in sample_data:
-            db_manager.add_entry(
+            db.add_entry(
                 content=data["content"],
                 mood=data["mood"],
                 category=data["category"],
@@ -79,7 +86,8 @@ app.secret_key = os.getenv("SECRET_KEY", "baddie-journal-demo-key-change-in-prod
 def home():
     """Home page with journal entry form and recent entries."""
     create_sample_entries()  # Ensure we have some demo data
-    all_entries = db_manager.get_all_entries()
+    db = get_db_manager()
+    all_entries = db.get_all_entries()
     recent_entries = all_entries[:5]  # Show last 5 entries
     return render_template("index.html", entries=recent_entries)
 
@@ -106,7 +114,8 @@ def add_entry():
 
     # Create new entry using database manager
     try:
-        entry = db_manager.add_entry(
+        db = get_db_manager()
+        entry = db.add_entry(
             content=content, mood=mood, category=category, tags=tags
         )
         flash("Journal entry added successfully!", "success")
@@ -120,18 +129,20 @@ def add_entry():
 @app.route("/entries")
 def entries():
     """List all journal entries."""
-    all_entries = db_manager.get_all_entries()
+    db = get_db_manager()
+    all_entries = db.get_all_entries()
     return render_template("entries.html", entries=all_entries)
 
 
 @app.route("/insights")
 def insights():
     """Show analytics and insights."""
-    all_entries = db_manager.get_all_entries()
+    db = get_db_manager()
+    all_entries = db.get_all_entries()
 
     if not all_entries:
         create_sample_entries()
-        all_entries = db_manager.get_all_entries()
+        all_entries = db.get_all_entries()
 
     insight_data = InsightData(all_entries)
     helper = InsightsHelper(insight_data)
@@ -158,7 +169,8 @@ def insights():
 @app.route("/api/entries", methods=["GET"])
 def api_entries():
     """API endpoint to get entries as JSON."""
-    all_entries = db_manager.get_all_entries()
+    db = get_db_manager()
+    all_entries = db.get_all_entries()
     entries_data = []
     for entry in all_entries:
         entries_data.append(
@@ -178,7 +190,8 @@ def api_entries():
 def health():
     """Health check endpoint for deployment platforms."""
     try:
-        entry_count = db_manager.get_entry_count()
+        db = get_db_manager()
+        entry_count = db.get_entry_count()
         return jsonify(
             {
                 "status": "healthy",
@@ -189,7 +202,7 @@ def health():
                 "python_version": sys.version,
                 "flask_available": True,
                 "sqlalchemy_available": (
-                    True if hasattr(db_manager, "engine") else False
+                    True if hasattr(db, "engine") else False
                 ),
                 "timestamp": datetime.now(UTC).isoformat(),
             }
@@ -239,10 +252,12 @@ def internal_error(error):
 @app.teardown_appcontext
 def close_db(error):
     """Clean up database connections on app teardown."""
-    try:
-        db_manager.close()
-    except:
-        pass
+    global db_manager
+    if db_manager is not None:
+        try:
+            db_manager.close()
+        except:
+            pass
 
 
 if __name__ == "__main__":
@@ -262,7 +277,8 @@ if __name__ == "__main__":
         app.run(host=host, port=port, debug=debug, threaded=True)
     finally:
         # Clean up database connection
-        try:
-            db_manager.close()
-        except:
-            pass
+        if db_manager is not None:
+            try:
+                db_manager.close()
+            except:
+                pass

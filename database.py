@@ -59,6 +59,12 @@ if SQLALCHEMY_AVAILABLE:
                     "SQLALCHEMY_DATABASE_URI", "sqlite:///journal.db"
                 )
 
+            # Check if we're in a serverless environment with SQLite (not recommended)
+            if database_url.startswith("sqlite:") and os.getenv("VERCEL"):
+                print("⚠️ WARNING: SQLite in serverless environment detected!")
+                print("⚠️ Data will be lost between function invocations.")
+                print("⚠️ Please set SQLALCHEMY_DATABASE_URI to a PostgreSQL URL.")
+
             self.engine = create_engine(database_url, echo=False)
             Base.metadata.create_all(self.engine)
             Session = sessionmaker(bind=self.engine)

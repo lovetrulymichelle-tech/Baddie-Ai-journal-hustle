@@ -1,0 +1,58 @@
+# Vercel deployment ignore file
+# Exclude files not needed in production deployment
+
+# Virtual environment
+venv/
+env/
+
+# SQLite databases (not compatible with serverless)
+*.db
+*.sqlite
+*.sqlite3
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+
+# Documentation (deployment-specific)
+DEPLOYMENT_*.md
+CONFLICTS_RESOLVED.md
+QUICK_DEPLOYMENT_PATH.md
+
+# Test files
+tests/
+test_*.py
+*_test.py
+
+# Demo and migration scripts (not needed in production)
+demo.py
+demo_subscription.py
+migrate_sqlite_to_postgres.py
+check_deployment.py
+
+# Agent workspace
+agent_workspace/
+
+# Issues tracking
+issues/
+
+# Docker files (not used in Vercel)
+Dockerfile
+.dockerignore
+
+# Procfile (for Railway/Heroku, not Vercel)
+Procfile

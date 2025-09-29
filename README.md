@@ -171,7 +171,23 @@ The application will be available at `http://localhost:8000`.
 
 ---
 
-## Deploy to Railway (Postgres)
+## Deployment Options
+
+This application supports multiple deployment platforms:
+
+### 🚀 Deploy to Vercel (Serverless)
+
+Vercel provides serverless Python hosting that's fast and easy to deploy. **Important**: Requires PostgreSQL database (SQLite won't work in serverless).
+
+📖 **See [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) for complete Vercel deployment guide**
+
+**Quick Start:**
+1. Set up PostgreSQL database (Vercel Postgres, Neon, Supabase, etc.)
+2. Add environment variable in Vercel: `SQLALCHEMY_DATABASE_URI=postgresql://...`
+3. Push to GitHub and connect to Vercel
+4. Deploy! ✅
+
+### 🚂 Deploy to Railway (Postgres)
 
 This section provides step-by-step instructions for deploying the Baddie AI Journal to Railway with a PostgreSQL database.
 
