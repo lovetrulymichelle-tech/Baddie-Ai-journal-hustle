@@ -15,7 +15,6 @@ from models.subscription import (
     Subscription,
     SubscriptionPlan,
     SubscriptionStatus,
-    SubscriptionPlanType,
     DEFAULT_PLANS,
 )
 from services.stripe_service import StripeService, StripeError
@@ -247,7 +246,7 @@ class SubscriptionService:
         try:
             # Cancel in Stripe if available
             if self.stripe_service and subscription.stripe_subscription_id:
-                stripe_data = self.stripe_service.cancel_subscription(
+                self.stripe_service.cancel_subscription(
                     subscription.stripe_subscription_id, at_period_end
                 )
 

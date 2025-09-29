@@ -109,20 +109,20 @@ def check_imports():
         # Test Flask app imports
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-        from baddie_journal.models import JournalEntry, InsightData
+        from baddie_journal.models import JournalEntry, InsightData  # noqa: F401
 
         print("   ✅ Core models")
 
-        from baddie_journal.insights import InsightsHelper
+        from baddie_journal.insights import InsightsHelper  # noqa: F401
 
         print("   ✅ Insights helper")
 
-        from database import DatabaseManager
+        from database import DatabaseManager  # noqa: F401
 
         print("   ✅ Database manager")
 
         # Test Flask imports
-        from flask import Flask
+        from flask import Flask  # noqa: F401
 
         print("   ✅ Flask framework")
 

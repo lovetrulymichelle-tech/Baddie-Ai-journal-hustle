@@ -18,23 +18,17 @@ from datetime import datetime, UTC, timedelta
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Import subscription modules directly to avoid dependency issues
-import sys
-import os
-
 sys.path.insert(
     0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "baddie_journal")
 )
 
-from models.subscription import (
-    User,
+from models.subscription import (  # noqa: E402
     Subscription,
-    SubscriptionPlan,
     SubscriptionStatus,
     DEFAULT_PLANS,
 )
-from services.subscription_service import SubscriptionService
-from services.notification_service import NotificationService
-from services.stripe_service import StripeService
+from services.subscription_service import SubscriptionService  # noqa: E402
+from services.notification_service import NotificationService  # noqa: E402
 
 
 def demonstrate_subscription_plans():
@@ -61,7 +55,7 @@ def demonstrate_subscription_plans():
                 print(f"     {status} {feature.replace('_', ' ').title()}")
             elif feature == "max_entries_per_day":
                 if value == -1:
-                    print(f"     ✅ Unlimited entries per day")
+                    print("     ✅ Unlimited entries per day")
                 else:
                     print(f"     📊 {value} entries per day")
 
@@ -90,13 +84,13 @@ def demonstrate_user_signup():
         user_data = result["user"]
         subscription_data = result["subscription"]
 
-        print(f"✅ User created successfully!")
+        print("✅ User created successfully!")
         print(f"   User ID: {user_data['id']}")
         print(f"   Email: {user_data['email']}")
         print(f"   Name: {user_data['name']}")
         print(f"   Created: {user_data['created_at']}")
 
-        print(f"\n📅 Trial Subscription:")
+        print("\n📅 Trial Subscription:")
         print(f"   Subscription ID: {subscription_data['id']}")
         print(f"   Status: {subscription_data['status']}")
         print(f"   Trial Start: {subscription_data['trial_start']}")
@@ -187,7 +181,7 @@ def demonstrate_subscription_upgrade(subscription):
 
             # Check access after upgrade
             access_info = subscription_service.check_subscription_access(subscription)
-            print(f"\n📊 Post-upgrade access:")
+            print("\n📊 Post-upgrade access:")
             print(f"   Has Access: {'✅' if access_info['has_access'] else '❌'}")
             print(f"   Is Trial: {'❌' if not access_info['is_trial'] else '✅'}")
             print(
@@ -210,7 +204,7 @@ def demonstrate_stripe_integration():
 
     # Check if Stripe is available
     try:
-        import stripe
+        import stripe  # noqa: F401
 
         stripe_available = True
     except ImportError:
@@ -225,7 +219,7 @@ def demonstrate_stripe_integration():
     stripe_key = os.getenv("STRIPE_SECRET_KEY")
     webhook_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
 
-    print(f"\n🔧 Environment Configuration:")
+    print("\n🔧 Environment Configuration:")
     print(f"   Stripe Key: {'✅ Set' if stripe_key else '❌ Not set'}")
     print(f"   Webhook Secret: {'✅ Set' if webhook_secret else '❌ Not set'}")
 

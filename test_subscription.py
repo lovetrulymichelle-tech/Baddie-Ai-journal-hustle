@@ -9,24 +9,20 @@ including trial periods, upgrades, and payment integration.
 import sys
 import os
 from datetime import datetime, UTC, timedelta
-from typing import Dict, Any
 import logging
-
-# Add the current directory to the Python path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Configure logging for tests
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-# Import subscription modules directly to avoid pandas dependency
-import sys
-import os
+# Add the current directory to the Python path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# Import subscription modules directly to avoid pandas dependency
 sys.path.insert(
     0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "baddie_journal")
 )
 
-from models.subscription import (
+from models.subscription import (  # noqa: E402
     User,
     Subscription,
     SubscriptionPlan,
@@ -34,8 +30,8 @@ from models.subscription import (
     SubscriptionPlanType,
     DEFAULT_PLANS,
 )
-from services.subscription_service import SubscriptionService
-from services.notification_service import NotificationService, NotificationType
+from services.subscription_service import SubscriptionService  # noqa: E402
+from services.notification_service import NotificationService, NotificationType  # noqa: E402
 
 
 def test_subscription_models():
@@ -55,7 +51,7 @@ def test_subscription_models():
     )
 
     assert plan.price_dollars == 9.99
-    assert plan.is_active == True
+    assert plan.is_active
     plan_dict = plan.to_dict()
     assert plan_dict["price_dollars"] == 9.99
     assert plan_dict["plan_type"] == "basic"
@@ -64,7 +60,7 @@ def test_subscription_models():
     # Test User
     user = User(id="user123", email="test@example.com", name="Test User")
 
-    assert user.is_active == True
+    assert user.is_active
     assert user.created_at is not None
     user_dict = user.to_dict()
     assert user_dict["email"] == "test@example.com"
@@ -80,8 +76,8 @@ def test_subscription_models():
 
     # Test trial functionality
     subscription.start_trial(7)
-    assert subscription.is_trial_active == True
-    assert subscription.is_subscription_active == True
+    assert subscription.is_trial_active
+    assert subscription.is_subscription_active
     # Trial end calculation may vary by milliseconds, so check within range
     days_left = subscription.days_until_trial_end
     assert days_left is not None and 6 <= days_left <= 7
@@ -91,12 +87,12 @@ def test_subscription_models():
     future_date = datetime.now(UTC) + timedelta(days=30)
     subscription.upgrade_from_trial(future_date)
     assert subscription.status == SubscriptionStatus.ACTIVE
-    assert subscription.is_trial_active == False
+    assert not subscription.is_trial_active
     print("  ✅ Subscription upgrade functionality")
 
     # Test cancellation
     subscription.cancel_subscription(at_period_end=True)
-    assert subscription.cancel_at_period_end == True
+    assert subscription.cancel_at_period_end
     print("  ✅ Subscription cancellation")
 
     print("✅ Subscription models tests passed\n")
@@ -151,7 +147,7 @@ def test_notification_service():
 
     # Test sending notifications
     success = service.send_trial_starting_notification(user, subscription)
-    assert success == True
+    assert success
     print("  ✅ Notification sending")
 
     print("✅ Notification service tests passed\n")
@@ -186,7 +182,7 @@ def test_subscription_service():
     # Test user creation with trial
     result = service.create_user_with_trial(email="test@example.com", name="Test User")
 
-    assert result["success"] == True
+    assert result["success"]
     assert result["user"] is not None
     assert result["subscription"] is not None
 
@@ -208,25 +204,25 @@ def test_subscription_service():
     )
 
     access_info = service.check_subscription_access(subscription)
-    assert access_info["has_access"] == True
-    assert access_info["is_trial"] == True
-    assert access_info["needs_upgrade"] == False
+    assert access_info["has_access"]
+    assert access_info["is_trial"]
+    assert not access_info["needs_upgrade"]
     print("  ✅ Subscription access checking")
 
     # Test expired trial upgrade
     subscription.trial_end = datetime.now(UTC) - timedelta(hours=1)
     access_info = service.check_subscription_access(subscription)
-    assert access_info["needs_upgrade"] == True
+    assert access_info["needs_upgrade"]
 
     upgrade_result = service.upgrade_trial_to_paid(subscription)
-    assert upgrade_result["success"] == True
+    assert upgrade_result["success"]
     assert subscription.status == SubscriptionStatus.ACTIVE
     print("  ✅ Trial to paid upgrade")
 
     # Test subscription cancellation
     cancel_result = service.cancel_subscription(subscription, at_period_end=True)
-    assert cancel_result["success"] == True
-    assert subscription.cancel_at_period_end == True
+    assert cancel_result["success"]
+    assert subscription.cancel_at_period_end
     print("  ✅ Subscription cancellation")
 
     print("✅ Subscription service tests passed\n")
@@ -281,7 +277,7 @@ def test_trial_workflow():
     result = service.create_user_with_trial(
         email="workflow@example.com", name="Workflow Test User"
     )
-    assert result["success"] == True
+    assert result["success"]
 
     user_data = result["user"]
     subscription_data = result["subscription"]
@@ -298,28 +294,28 @@ def test_trial_workflow():
     )
 
     access = service.check_subscription_access(subscription)
-    assert access["has_access"] == True
-    assert access["is_trial"] == True
+    assert access["has_access"]
+    assert access["is_trial"]
     print("  ✅ Step 2: Trial is active and accessible")
 
     # Step 3: Simulate trial expiration
     subscription.trial_end = datetime.now(UTC) - timedelta(hours=1)
 
     access = service.check_subscription_access(subscription)
-    assert access["needs_upgrade"] == True
+    assert access["needs_upgrade"]
     print("  ✅ Step 3: Trial expiration detected")
 
     # Step 4: Automatic upgrade
     upgrade_result = service.upgrade_trial_to_paid(subscription)
-    assert upgrade_result["success"] == True
+    assert upgrade_result["success"]
     assert subscription.status == SubscriptionStatus.ACTIVE
     print("  ✅ Step 4: Automatic upgrade to paid")
 
     # Step 5: Check ongoing access
     access = service.check_subscription_access(subscription)
-    assert access["has_access"] == True
-    assert access["is_trial"] == False
-    assert access["needs_upgrade"] == False
+    assert access["has_access"]
+    assert not access["is_trial"]
+    assert not access["needs_upgrade"]
     print("  ✅ Step 5: Paid subscription active")
 
     print("✅ Complete trial workflow tests passed\n")
