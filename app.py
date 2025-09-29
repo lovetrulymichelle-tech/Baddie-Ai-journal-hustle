@@ -9,9 +9,6 @@ import os
 import sys
 from datetime import datetime, UTC
 
-# Add the current directory to the Python path for imports
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
 try:
     from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 
@@ -20,9 +17,12 @@ except ImportError:
     print("Flask is required for web deployment. Install with: pip install flask")
     sys.exit(1)
 
-from baddie_journal.models import JournalEntry, InsightData
-from baddie_journal.insights import InsightsHelper
-from database import DatabaseManager
+# Add the current directory to the Python path for imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from baddie_journal.models import InsightData  # noqa: E402
+from baddie_journal.insights import InsightsHelper  # noqa: E402
+from database import DatabaseManager  # noqa: E402
 
 # Initialize database manager
 try:
@@ -106,7 +106,7 @@ def add_entry():
 
     # Create new entry using database manager
     try:
-        entry = db_manager.add_entry(
+        db_manager.add_entry(
             content=content, mood=mood, category=category, tags=tags
         )
         flash("Journal entry added successfully!", "success")
@@ -241,7 +241,7 @@ def close_db(error):
     """Clean up database connections on app teardown."""
     try:
         db_manager.close()
-    except:
+    except Exception:
         pass
 
 
@@ -264,5 +264,5 @@ if __name__ == "__main__":
         # Clean up database connection
         try:
             db_manager.close()
-        except:
+        except Exception:
             pass

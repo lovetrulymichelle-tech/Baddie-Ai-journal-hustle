@@ -6,8 +6,8 @@ trial billing, and webhook handling.
 """
 
 import os
-from typing import Optional, Dict, Any, List
-from datetime import datetime, UTC, timedelta
+from typing import Optional, Dict, Any
+from datetime import datetime, UTC
 import logging
 
 try:
@@ -15,7 +15,7 @@ try:
 except ImportError:
     stripe = None
 
-from models.subscription import User, Subscription, SubscriptionPlan, SubscriptionStatus
+from models.subscription import User, SubscriptionPlan
 
 logger = logging.getLogger(__name__)
 
