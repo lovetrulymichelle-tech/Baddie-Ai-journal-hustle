@@ -28,11 +28,11 @@ from database import DatabaseManager
 try:
     db_manager = DatabaseManager()
     print("✅ Database manager initialized successfully")
-except Exception:
-    print("⚠️ Database initialization error - using fallback storage")
-    # Fallback to in-memory storage
+except Exception as e:
+    print(f"⚠️ Database initialization error: {e}")
+    print("⚠️ Using fallback storage")
+    # For serverless environments, we'll create a simpler fallback
     from database import DatabaseManager
-
     db_manager = DatabaseManager()
 
 
@@ -285,3 +285,6 @@ if __name__ == "__main__":
             db_manager.close()
         except Exception:
             pass
+
+# For Vercel serverless deployment
+application = app
