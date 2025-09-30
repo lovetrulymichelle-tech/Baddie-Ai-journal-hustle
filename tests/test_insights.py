@@ -112,9 +112,16 @@ def test_insights_helper():
     """Test the InsightsHelper functionality."""
     # Create test entries
     entries = [
-        JournalEntry(1, "Happy day!", "happy", "personal", ["joy"], datetime.now(timezone.utc)),
         JournalEntry(
-            2, "Work productive", "focused", "work", ["productivity"], datetime.now(timezone.utc)
+            1, "Happy day!", "happy", "personal", ["joy"], datetime.now(timezone.utc)
+        ),
+        JournalEntry(
+            2,
+            "Work productive",
+            "focused",
+            "work",
+            ["productivity"],
+            datetime.now(timezone.utc),
         ),
         JournalEntry(
             3,
