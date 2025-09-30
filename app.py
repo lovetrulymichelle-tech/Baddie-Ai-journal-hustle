@@ -7,6 +7,7 @@ This creates a deployable web interface around the existing journaling functiona
 
 import os
 import sys
+import logging
 from datetime import datetime, UTC
 
 try:
@@ -20,6 +21,16 @@ except ImportError:
 # Add the current directory to the Python path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stderr)
+    ]
+)
+logger = logging.getLogger(__name__)
+
 from baddie_journal.models import InsightData  # noqa: E402
 from baddie_journal.insights import InsightsHelper  # noqa: E402
 from database import DatabaseManager  # noqa: E402
@@ -27,9 +38,9 @@ from database import DatabaseManager  # noqa: E402
 # Initialize database manager
 try:
     db_manager = DatabaseManager()
-    print("✅ Database manager initialized successfully")
-except Exception:
-    print("⚠️ Database initialization error - using fallback storage")
+    logger.info("✅ Database manager initialized successfully")
+except Exception as e:
+    logger.error(f"⚠️ Database initialization error: {str(e)}", exc_info=True)
     # Fallback to in-memory storage
     from database import DatabaseManager
 
@@ -78,10 +89,14 @@ app.secret_key = os.getenv("SECRET_KEY", "baddie-journal-demo-key-change-in-prod
 @app.route("/")
 def home():
     """Home page with journal entry form and recent entries."""
-    create_sample_entries()  # Ensure we have some demo data
-    all_entries = db_manager.get_all_entries()
-    recent_entries = all_entries[:5]  # Show last 5 entries
-    return render_template("index.html", entries=recent_entries)
+    try:
+        create_sample_entries()  # Ensure we have some demo data
+        all_entries = db_manager.get_all_entries()
+        recent_entries = all_entries[:5]  # Show last 5 entries
+        return render_template("index.html", entries=recent_entries)
+    except Exception as e:
+        logger.error(f"Error in home route: {str(e)}", exc_info=True)
+        raise
 
 
 @app.route("/add_entry", methods=["POST"])
@@ -108,8 +123,9 @@ def add_entry():
     try:
         db_manager.add_entry(content=content, mood=mood, category=category, tags=tags)
         flash("Journal entry added successfully!", "success")
-    except Exception:
-        # Don't expose internal errors to users
+    except Exception as e:
+        # Log the error for debugging but don't expose internal errors to users
+        logger.error(f"Error adding entry: {str(e)}", exc_info=True)
         flash("Error adding entry. Please try again.", "error")
 
     return redirect(url_for("home"))
@@ -118,58 +134,70 @@ def add_entry():
 @app.route("/entries")
 def entries():
     """List all journal entries."""
-    all_entries = db_manager.get_all_entries()
-    return render_template("entries.html", entries=all_entries)
+    try:
+        all_entries = db_manager.get_all_entries()
+        return render_template("entries.html", entries=all_entries)
+    except Exception as e:
+        logger.error(f"Error in entries route: {str(e)}", exc_info=True)
+        raise
 
 
 @app.route("/insights")
 def insights():
     """Show analytics and insights."""
-    all_entries = db_manager.get_all_entries()
-
-    if not all_entries:
-        create_sample_entries()
+    try:
         all_entries = db_manager.get_all_entries()
 
-    insight_data = InsightData(all_entries)
-    helper = InsightsHelper(insight_data)
+        if not all_entries:
+            create_sample_entries()
+            all_entries = db_manager.get_all_entries()
 
-    # Calculate insights
-    streak = helper.calculate_streak()
-    total_entries = insight_data.total_entries()
-    frequency = helper.get_writing_frequency(30)
-    mood_breakdown = helper.get_mood_breakdown()
-    top_tags = helper.get_top_tags(10)
-    metrics = helper.get_total_metrics()
+        insight_data = InsightData(all_entries)
+        helper = InsightsHelper(insight_data)
 
-    return render_template(
-        "insights.html",
-        streak=streak,
-        total_entries=total_entries,
-        frequency=frequency,
-        mood_breakdown=mood_breakdown,
-        top_tags=top_tags,
-        metrics=metrics,
-    )
+        # Calculate insights
+        streak = helper.calculate_streak()
+        total_entries = insight_data.total_entries()
+        frequency = helper.get_writing_frequency(30)
+        mood_breakdown = helper.get_mood_breakdown()
+        top_tags = helper.get_top_tags(10)
+        metrics = helper.get_total_metrics()
+
+        return render_template(
+            "insights.html",
+            streak=streak,
+            total_entries=total_entries,
+            frequency=frequency,
+            mood_breakdown=mood_breakdown,
+            top_tags=top_tags,
+            metrics=metrics,
+        )
+    except Exception as e:
+        logger.error(f"Error in insights route: {str(e)}", exc_info=True)
+        raise
 
 
 @app.route("/api/entries", methods=["GET"])
 def api_entries():
     """API endpoint to get entries as JSON."""
-    all_entries = db_manager.get_all_entries()
-    entries_data = []
-    for entry in all_entries:
-        entries_data.append(
-            {
-                "id": entry.id,
-                "content": entry.content,
-                "mood": entry.mood,
-                "category": entry.category,
-                "tags": entry.tags,
-                "timestamp": entry.timestamp.isoformat(),
-            }
-        )
-    return jsonify(entries_data)
+    try:
+        all_entries = db_manager.get_all_entries()
+        entries_data = []
+        for entry in all_entries:
+            entries_data.append(
+                {
+                    "id": entry.id,
+                    "content": entry.content,
+                    "mood": entry.mood,
+                    "category": entry.category,
+                    "tags": entry.tags,
+                    "timestamp": entry.timestamp.isoformat(),
+                }
+            )
+        return jsonify(entries_data)
+    except Exception as e:
+        logger.error(f"Error in api_entries route: {str(e)}", exc_info=True)
+        return jsonify({"error": "Failed to fetch entries"}), 500
 
 
 @app.route("/health")
@@ -193,6 +221,8 @@ def health():
             }
         )
     except Exception as e:
+        # Log the error with full details
+        logger.error(f"Health check failed: {str(e)}", exc_info=True)
         # Don't expose stack trace details in production, but provide debug info
         error_info = (
             str(e)
@@ -218,6 +248,7 @@ def health():
 # Error handlers
 @app.errorhandler(404)
 def not_found(error):
+    logger.warning(f"404 error: {request.url}")
     return (
         render_template("error.html", error_code=404, error_message="Page not found"),
         404,
@@ -226,21 +257,33 @@ def not_found(error):
 
 @app.errorhandler(500)
 def internal_error(error):
-    return (
-        render_template(
-            "error.html", error_code=500, error_message="Internal server error"
-        ),
-        500,
-    )
+    # Log the full error for debugging
+    logger.error(f"500 Internal Server Error: {str(error)}", exc_info=True)
+    try:
+        return (
+            render_template(
+                "error.html", error_code=500, error_message="Internal server error"
+            ),
+            500,
+        )
+    except Exception as template_error:
+        # If template rendering fails, return plain text
+        logger.error(f"Error template rendering failed: {str(template_error)}", exc_info=True)
+        return (
+            f"Internal Server Error: {str(error) if os.getenv('FLASK_DEBUG') == 'true' else 'An error occurred'}",
+            500,
+        )
 
 
 @app.teardown_appcontext
 def close_db(error):
     """Clean up database connections on app teardown."""
+    if error:
+        logger.error(f"Request ended with error: {str(error)}", exc_info=True)
     try:
         db_manager.close()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.error(f"Error closing database: {str(e)}", exc_info=True)
 
 
 if __name__ == "__main__":
