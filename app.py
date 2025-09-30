@@ -106,9 +106,7 @@ def add_entry():
 
     # Create new entry using database manager
     try:
-        db_manager.add_entry(
-            content=content, mood=mood, category=category, tags=tags
-        )
+        db_manager.add_entry(content=content, mood=mood, category=category, tags=tags)
         flash("Journal entry added successfully!", "success")
     except Exception:
         # Don't expose internal errors to users
