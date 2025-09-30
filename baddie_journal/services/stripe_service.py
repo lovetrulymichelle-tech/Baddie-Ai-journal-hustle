@@ -7,7 +7,7 @@ trial billing, and webhook handling.
 
 import os
 from typing import Optional, Dict, Any
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 import logging
 
 try:
@@ -134,13 +134,13 @@ class StripeService:
                 "subscription_id": subscription.id,
                 "client_secret": subscription.latest_invoice.payment_intent.client_secret,
                 "status": subscription.status,
-                "trial_start": datetime.fromtimestamp(subscription.trial_start, tz=UTC),
-                "trial_end": datetime.fromtimestamp(subscription.trial_end, tz=UTC),
+                "trial_start": datetime.fromtimestamp(subscription.trial_start, tz=timezone.utc),
+                "trial_end": datetime.fromtimestamp(subscription.trial_end, tz=timezone.utc),
                 "current_period_start": datetime.fromtimestamp(
-                    subscription.current_period_start, tz=UTC
+                    subscription.current_period_start, tz=timezone.utc
                 ),
                 "current_period_end": datetime.fromtimestamp(
-                    subscription.current_period_end, tz=UTC
+                    subscription.current_period_end, tz=timezone.utc
                 ),
             }
 
@@ -187,7 +187,7 @@ class StripeService:
                 metadata={
                     "plan_id": new_plan.id,
                     "upgraded_from_trial": "true",
-                    "upgrade_timestamp": str(int(datetime.now(UTC).timestamp())),
+                    "upgrade_timestamp": str(int(datetime.now(timezone.utc).timestamp())),
                 },
             )
 
@@ -199,10 +199,10 @@ class StripeService:
                 "subscription_id": subscription.id,
                 "status": subscription.status,
                 "current_period_start": datetime.fromtimestamp(
-                    subscription.current_period_start, tz=UTC
+                    subscription.current_period_start, tz=timezone.utc
                 ),
                 "current_period_end": datetime.fromtimestamp(
-                    subscription.current_period_end, tz=UTC
+                    subscription.current_period_end, tz=timezone.utc
                 ),
             }
 
@@ -240,12 +240,12 @@ class StripeService:
                 "status": subscription.status,
                 "cancel_at_period_end": subscription.cancel_at_period_end,
                 "cancelled_at": (
-                    datetime.fromtimestamp(subscription.canceled_at, tz=UTC)
+                    datetime.fromtimestamp(subscription.canceled_at, tz=timezone.utc)
                     if subscription.canceled_at
                     else None
                 ),
                 "current_period_end": datetime.fromtimestamp(
-                    subscription.current_period_end, tz=UTC
+                    subscription.current_period_end, tz=timezone.utc
                 ),
             }
 
@@ -271,24 +271,24 @@ class StripeService:
                 "customer_id": subscription.customer,
                 "status": subscription.status,
                 "trial_start": (
-                    datetime.fromtimestamp(subscription.trial_start, tz=UTC)
+                    datetime.fromtimestamp(subscription.trial_start, tz=timezone.utc)
                     if subscription.trial_start
                     else None
                 ),
                 "trial_end": (
-                    datetime.fromtimestamp(subscription.trial_end, tz=UTC)
+                    datetime.fromtimestamp(subscription.trial_end, tz=timezone.utc)
                     if subscription.trial_end
                     else None
                 ),
                 "current_period_start": datetime.fromtimestamp(
-                    subscription.current_period_start, tz=UTC
+                    subscription.current_period_start, tz=timezone.utc
                 ),
                 "current_period_end": datetime.fromtimestamp(
-                    subscription.current_period_end, tz=UTC
+                    subscription.current_period_end, tz=timezone.utc
                 ),
                 "cancel_at_period_end": subscription.cancel_at_period_end,
                 "cancelled_at": (
-                    datetime.fromtimestamp(subscription.canceled_at, tz=UTC)
+                    datetime.fromtimestamp(subscription.canceled_at, tz=timezone.utc)
                     if subscription.canceled_at
                     else None
                 ),
@@ -356,7 +356,7 @@ class StripeService:
             "event_type": "payment_succeeded",
             "subscription_id": subscription_id,
             "amount_paid": event_data.get("amount_paid", 0),
-            "timestamp": datetime.fromtimestamp(event_data.get("created", 0), tz=UTC),
+            "timestamp": datetime.fromtimestamp(event_data.get("created", 0), tz=timezone.utc),
         }
 
     def _handle_payment_failed(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -367,7 +367,7 @@ class StripeService:
             "event_type": "payment_failed",
             "subscription_id": subscription_id,
             "amount_due": event_data.get("amount_due", 0),
-            "timestamp": datetime.fromtimestamp(event_data.get("created", 0), tz=UTC),
+            "timestamp": datetime.fromtimestamp(event_data.get("created", 0), tz=timezone.utc),
         }
 
     def _handle_subscription_updated(
@@ -382,9 +382,9 @@ class StripeService:
             "status": event_data.get("status"),
             "cancel_at_period_end": event_data.get("cancel_at_period_end"),
             "current_period_end": datetime.fromtimestamp(
-                event_data.get("current_period_end", 0), tz=UTC
+                event_data.get("current_period_end", 0), tz=timezone.utc
             ),
-            "timestamp": datetime.now(UTC),
+            "timestamp": datetime.now(timezone.utc),
         }
 
     def _handle_subscription_deleted(
@@ -397,9 +397,9 @@ class StripeService:
             "event_type": "subscription_deleted",
             "subscription_id": subscription_id,
             "cancelled_at": datetime.fromtimestamp(
-                event_data.get("canceled_at", 0), tz=UTC
+                event_data.get("canceled_at", 0), tz=timezone.utc
             ),
-            "timestamp": datetime.now(UTC),
+            "timestamp": datetime.now(timezone.utc),
         }
 
     def _handle_trial_will_end(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -411,7 +411,7 @@ class StripeService:
             "event_type": "trial_will_end",
             "subscription_id": subscription_id,
             "trial_end": (
-                datetime.fromtimestamp(trial_end, tz=UTC) if trial_end else None
+                datetime.fromtimestamp(trial_end, tz=timezone.utc) if trial_end else None
             ),
-            "timestamp": datetime.now(UTC),
+            "timestamp": datetime.now(timezone.utc),
         }

@@ -5,7 +5,7 @@ This module provides the InsightsHelper class for analyzing journal entries
 and generating insights about patterns, moods, and productivity over time.
 """
 
-from datetime import datetime, UTC, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Tuple
 from collections import Counter
 
@@ -56,7 +56,7 @@ class InsightsHelper:
             entries_by_date[date_key].append(entry)
 
         # Calculate streak from today backwards
-        current_date = datetime.now(UTC).date()
+        current_date = datetime.now(timezone.utc).date()
         streak = 0
 
         while current_date in entries_by_date:
@@ -75,7 +75,7 @@ class InsightsHelper:
         Returns:
             Dictionary mapping date strings to entry counts
         """
-        end_date = datetime.now(UTC)
+        end_date = datetime.now(timezone.utc)
         start_date = end_date - timedelta(days=days)
 
         # Get entries in the date range
@@ -147,7 +147,7 @@ class InsightsHelper:
         Returns:
             Dictionary mapping mood names to list of (date, count) tuples
         """
-        end_date = datetime.now(UTC)
+        end_date = datetime.now(timezone.utc)
         start_date = end_date - timedelta(days=days)
         relevant_entries = self.data.get_entries_in_range(start_date, end_date)
 
@@ -213,7 +213,7 @@ class InsightsHelper:
             Path to the created CSV file
         """
         if filename is None:
-            timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+            timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
             filename = f"journal_insights_{timestamp}.csv"
 
         # Convert entries to DataFrame

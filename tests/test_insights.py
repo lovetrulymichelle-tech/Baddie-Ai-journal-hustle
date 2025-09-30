@@ -8,7 +8,7 @@ These tests verify the web application functionality including:
 """
 
 import pytest
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 import os
 import tempfile
 import sys
@@ -112,9 +112,9 @@ def test_insights_helper():
     """Test the InsightsHelper functionality."""
     # Create test entries
     entries = [
-        JournalEntry(1, "Happy day!", "happy", "personal", ["joy"], datetime.now(UTC)),
+        JournalEntry(1, "Happy day!", "happy", "personal", ["joy"], datetime.now(timezone.utc)),
         JournalEntry(
-            2, "Work productive", "focused", "work", ["productivity"], datetime.now(UTC)
+            2, "Work productive", "focused", "work", ["productivity"], datetime.now(timezone.utc)
         ),
         JournalEntry(
             3,
@@ -122,7 +122,7 @@ def test_insights_helper():
             "contemplative",
             "personal",
             ["reflection"],
-            datetime.now(UTC),
+            datetime.now(timezone.utc),
         ),
     ]
 

@@ -6,7 +6,7 @@ This module provides SQLAlchemy database models and initialization.
 """
 
 import os
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 
 # Optional SQLAlchemy import for database functionality
 try:
@@ -32,7 +32,7 @@ if SQLALCHEMY_AVAILABLE:
         mood = Column(String, nullable=False)
         category = Column(String, default="personal")
         tags = Column(JSON, default=lambda: [])
-        timestamp = Column(DateTime, default=datetime.now(UTC))
+        timestamp = Column(DateTime, default=datetime.now(timezone.utc))
 
         def to_journal_entry(self):
             """Convert to our domain model JournalEntry."""
@@ -74,7 +74,7 @@ if SQLALCHEMY_AVAILABLE:
                 mood=mood,
                 category=category,
                 tags=tags,
-                timestamp=datetime.now(UTC),
+                timestamp=datetime.now(timezone.utc),
             )
             self.session.add(entry)
             self.session.commit()
@@ -120,7 +120,7 @@ else:
                 mood=mood,
                 category=category,
                 tags=tags,
-                timestamp=datetime.now(UTC),
+                timestamp=datetime.now(timezone.utc),
             )
             self.entries.append(entry)
             self.next_id += 1

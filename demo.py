@@ -10,7 +10,7 @@ This script demonstrates the core functionality including:
 
 import os
 import sys
-from datetime import datetime, UTC, timedelta
+from datetime import datetime, timedelta, timezone
 
 # Add the current directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -43,7 +43,7 @@ def create_sample_data() -> InsightData:
             mood="happy",
             category="personal",
             tags=["meditation", "productivity", "gratitude"],
-            timestamp=datetime.now(UTC) - timedelta(days=5),
+            timestamp=datetime.now(timezone.utc) - timedelta(days=5),
         ),
         JournalEntry(
             id=2,
@@ -54,7 +54,7 @@ def create_sample_data() -> InsightData:
             mood="stressed",
             category="work",
             tags=["meetings", "overwhelmed", "time-management"],
-            timestamp=datetime.now(UTC) - timedelta(days=4),
+            timestamp=datetime.now(timezone.utc) - timedelta(days=4),
         ),
         JournalEntry(
             id=3,
@@ -65,7 +65,7 @@ def create_sample_data() -> InsightData:
             mood="energetic",
             category="health",
             tags=["exercise", "running", "motivation"],
-            timestamp=datetime.now(UTC) - timedelta(days=3),
+            timestamp=datetime.now(timezone.utc) - timedelta(days=3),
         ),
         JournalEntry(
             id=4,
@@ -76,7 +76,7 @@ def create_sample_data() -> InsightData:
             mood="content",
             category="personal",
             tags=["family", "connection", "relationships"],
-            timestamp=datetime.now(UTC) - timedelta(days=2),
+            timestamp=datetime.now(timezone.utc) - timedelta(days=2),
         ),
         JournalEntry(
             id=5,
@@ -87,7 +87,7 @@ def create_sample_data() -> InsightData:
             mood="melancholy",
             category="personal",
             tags=["reflection", "emotions"],
-            timestamp=datetime.now(UTC) - timedelta(days=1),
+            timestamp=datetime.now(timezone.utc) - timedelta(days=1),
         ),
         JournalEntry(
             id=6,
@@ -98,7 +98,7 @@ def create_sample_data() -> InsightData:
             mood="optimistic",
             category="work",
             tags=["new-project", "excitement", "fresh-start"],
-            timestamp=datetime.now(UTC),
+            timestamp=datetime.now(timezone.utc),
         ),
     ]
 

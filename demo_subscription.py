@@ -12,7 +12,7 @@ This script demonstrates the complete subscription workflow including:
 
 import os
 import sys
-from datetime import datetime, UTC, timedelta
+from datetime import datetime, timedelta, timezone
 
 # Add the current directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -133,7 +133,7 @@ def demonstrate_trial_management(subscription_data):
     print("\n📅 Simulating trial progression...")
 
     # 3 days left
-    subscription.trial_end = datetime.now(UTC) + timedelta(days=3)
+    subscription.trial_end = datetime.now(timezone.utc) + timedelta(days=3)
     notification_service = NotificationService()
     notification_type = notification_service.should_send_trial_notification(
         subscription
@@ -142,7 +142,7 @@ def demonstrate_trial_management(subscription_data):
         print(f"   🔔 Notification: {notification_type.value}")
 
     # 1 day left
-    subscription.trial_end = datetime.now(UTC) + timedelta(days=1)
+    subscription.trial_end = datetime.now(timezone.utc) + timedelta(days=1)
     notification_type = notification_service.should_send_trial_notification(
         subscription
     )
@@ -150,7 +150,7 @@ def demonstrate_trial_management(subscription_data):
         print(f"   🔔 Notification: {notification_type.value}")
 
     # Expired
-    subscription.trial_end = datetime.now(UTC) - timedelta(hours=1)
+    subscription.trial_end = datetime.now(timezone.utc) - timedelta(hours=1)
     notification_type = notification_service.should_send_trial_notification(
         subscription
     )
