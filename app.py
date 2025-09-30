@@ -28,11 +28,11 @@ from database import DatabaseManager  # noqa: E402
 try:
     db_manager = DatabaseManager()
     print("✅ Database manager initialized successfully")
-except Exception:
-    print("⚠️ Database initialization error - using fallback storage")
-    # Fallback to in-memory storage
+except Exception as e:
+    print(f"⚠️ Database initialization error: {e}")
+    print("⚠️ Using fallback storage")
+    # For serverless environments, we'll create a simpler fallback
     from database import DatabaseManager
-
     db_manager = DatabaseManager()
 
 
@@ -177,6 +177,14 @@ def health():
     """Health check endpoint for deployment platforms."""
     try:
         entry_count = db_manager.get_entry_count()
+        
+        # Detect if running in serverless environment
+        is_serverless = (
+            os.getenv('VERCEL') == '1' or 
+            os.getenv('AWS_LAMBDA_FUNCTION_NAME') is not None or
+            app.config.get('SERVERLESS', False)
+        )
+        
         return jsonify(
             {
                 "status": "healthy",
@@ -186,6 +194,8 @@ def health():
                 "database": "connected",
                 "python_version": sys.version,
                 "flask_available": True,
+                "serverless": is_serverless,
+                "platform": os.getenv('VERCEL_ENV', 'unknown'),
                 "sqlalchemy_available": (
                     True if hasattr(db_manager, "engine") else False
                 ),
@@ -199,6 +209,13 @@ def health():
             if os.getenv("FLASK_DEBUG") == "true"
             else "Database connection error"
         )
+        
+        is_serverless = (
+            os.getenv('VERCEL') == '1' or 
+            os.getenv('AWS_LAMBDA_FUNCTION_NAME') is not None or
+            app.config.get('SERVERLESS', False)
+        )
+        
         return (
             jsonify(
                 {
@@ -208,6 +225,8 @@ def health():
                     "error": error_info,
                     "python_version": sys.version,
                     "flask_available": True,
+                    "serverless": is_serverless,
+                    "platform": os.getenv('VERCEL_ENV', 'unknown'),
                     "timestamp": datetime.now(UTC).isoformat(),
                 }
             ),
@@ -264,3 +283,6 @@ if __name__ == "__main__":
             db_manager.close()
         except Exception:
             pass
+
+# For Vercel serverless deployment
+application = app
