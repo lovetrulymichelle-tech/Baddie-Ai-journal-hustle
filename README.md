@@ -13,6 +13,8 @@
 - ❌ NEVER put API keys in comments or source code
 - 🔐 Format: `OPENAI_API_KEY=sk-your-key` (no spaces, no comments)
 
+**Need help setting up your API key?** → See [QUICKSTART_API_SETUP.md](QUICKSTART_API_SETUP.md)
+
 See [SECURITY.md](SECURITY.md) for complete guidelines.
 
 ---
