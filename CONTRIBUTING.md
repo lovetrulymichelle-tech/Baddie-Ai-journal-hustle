@@ -22,6 +22,7 @@ This project adheres to a Code of Conduct that all contributors are expected to 
 Before you begin:
 - Make sure you have Python 3.8+ installed
 - Familiarize yourself with the project by reading the [README.md](README.md)
+- **IMPORTANT**: Read [SECURITY.md](SECURITY.md) for handling API keys and credentials securely
 - Check the [.github/copilot-instructions.md](.github/copilot-instructions.md) for detailed project architecture and guidelines
 
 ## Development Setup
@@ -44,7 +45,17 @@ Before you begin:
    pip install -r requirements.txt
    ```
 
-4. **Verify Installation**
+4. **Set Up Environment Variables** (IMPORTANT - see [SECURITY.md](SECURITY.md))
+   ```bash
+   # Copy the example environment file
+   cp .env.example .env
+   
+   # Edit .env and add your actual credentials
+   # NEVER commit .env to git - it's already in .gitignore
+   # Use format: VARIABLE_NAME=value (no spaces around =)
+   ```
+
+5. **Verify Installation**
    ```bash
    python check_deployment.py
    ```
@@ -55,6 +66,40 @@ Before you begin:
    python test_swarms.py
    python test_subscription.py
    ```
+
+## Security Guidelines
+
+**CRITICAL**: Before contributing, read [SECURITY.md](SECURITY.md) to understand how to handle credentials safely.
+
+### Key Security Rules
+
+1. **Never commit `.env` files**:
+   - `.env` is in `.gitignore` - keep it that way
+   - Use `.env.example` for documentation only
+   - Never put real API keys in code or comments
+
+2. **Proper `.env` format**:
+   ```bash
+   # ✅ CORRECT
+   OPENAI_API_KEY=sk-your-actual-key
+   SECRET_KEY=your-secret
+   
+   # ❌ WRONG - commented out won't work
+   # OPENAI_API_KEY=sk-your-key
+   
+   # ❌ WRONG - missing = sign
+   OPENAI_API_KEYsk-your-key
+   ```
+
+3. **If you accidentally commit a secret**:
+   - Immediately revoke/regenerate the credential
+   - Remove it from git: `git rm --cached .env`
+   - Never trust an exposed key, even if removed from git
+
+4. **In Pull Requests**:
+   - Never include real API keys in code examples
+   - Use placeholder values like `sk-your-api-key-here`
+   - Reference environment variables instead of hardcoding
 
 ## How to Contribute
 
@@ -169,6 +214,8 @@ python demo.py
 - [ ] Branch is up-to-date with main
 - [ ] PR description clearly explains the changes
 - [ ] Related issue is referenced (if applicable)
+- [ ] **No secrets or API keys in commits** (check with `git diff`)
+- [ ] `.env` file is not committed (should be in `.gitignore`)
 
 ### PR Title Format
 
@@ -273,18 +320,27 @@ Use conventional commit format:
 
 ## Environment Variables
 
+**IMPORTANT**: See [SECURITY.md](SECURITY.md) for detailed security guidelines.
+
 For local development, copy `.env.example` to `.env` and configure:
 
 ```bash
 cp .env.example .env
+# Edit .env with your actual credentials
 ```
+
+**Security Rules**:
+- ✅ Use `.env` file (already in `.gitignore`)
+- ✅ Format: `VARIABLE_NAME=value` (no spaces)
+- ❌ Never commit `.env` to git
+- ❌ Never put API keys in code or comments
 
 Required for development:
 - `SECRET_KEY`: Flask secret key
 - `SQLALCHEMY_DATABASE_URI`: Database connection (optional, defaults to SQLite)
 
 Optional:
-- `OPENAI_API_KEY`: For AI features
+- `OPENAI_API_KEY`: For AI features (get from https://platform.openai.com/api-keys)
 - `STRIPE_SECRET_KEY`: For subscription features
 
 ## Database Changes
