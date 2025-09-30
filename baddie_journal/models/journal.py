@@ -7,7 +7,7 @@ This module defines the main data structures used throughout the application:
 """
 
 from dataclasses import dataclass
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from typing import List
 
 
@@ -36,10 +36,10 @@ class JournalEntry:
         """Ensure timestamp is in UTC."""
         if self.timestamp.tzinfo is None:
             # If no timezone info, assume it's already UTC
-            self.timestamp = self.timestamp.replace(tzinfo=UTC)
-        elif self.timestamp.tzinfo != UTC:
+            self.timestamp = self.timestamp.replace(tzinfo=timezone.utc)
+        elif self.timestamp.tzinfo != timezone.utc:
             # Convert to UTC if it's in a different timezone
-            self.timestamp = self.timestamp.astimezone(UTC)
+            self.timestamp = self.timestamp.astimezone(timezone.utc)
 
     def to_dict(self) -> dict:
         """Convert the entry to a dictionary for serialization."""

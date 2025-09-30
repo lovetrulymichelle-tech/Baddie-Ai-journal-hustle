@@ -7,7 +7,7 @@ This creates a deployable web interface around the existing journaling functiona
 
 import os
 import sys
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 
 try:
     from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
@@ -189,7 +189,7 @@ def health():
                 "sqlalchemy_available": (
                     True if hasattr(db_manager, "engine") else False
                 ),
-                "timestamp": datetime.now(UTC).isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
         )
     except Exception as e:
@@ -208,7 +208,7 @@ def health():
                     "error": error_info,
                     "python_version": sys.version,
                     "flask_available": True,
-                    "timestamp": datetime.now(UTC).isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 }
             ),
             500,

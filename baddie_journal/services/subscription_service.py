@@ -6,7 +6,7 @@ trials, upgrades, and subscription lifecycle events.
 """
 
 import logging
-from datetime import datetime, UTC, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional
 import uuid
 
@@ -204,7 +204,7 @@ class SubscriptionService:
                 subscription.upgrade_from_trial(stripe_data["current_period_end"])
             else:
                 # Upgrade locally without Stripe
-                new_period_end = datetime.now(UTC) + timedelta(
+                new_period_end = datetime.now(timezone.utc) + timedelta(
                     days=30
                 )  # 30 days from now
                 subscription.upgrade_from_trial(new_period_end)

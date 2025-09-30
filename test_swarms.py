@@ -6,7 +6,7 @@ This script runs basic tests to verify the core functionality is working.
 """
 
 import sys
-from datetime import datetime, UTC, timedelta
+from datetime import datetime, timedelta, timezone
 from baddie_journal import JournalEntry, InsightData, InsightsHelper
 
 
@@ -21,7 +21,7 @@ def test_models():
         mood="happy",
         category="test",
         tags=["testing", "demo"],
-        timestamp=datetime.now(UTC),
+        timestamp=datetime.now(timezone.utc),
     )
 
     assert entry.id == 1
@@ -45,14 +45,14 @@ def test_insights():
 
     # Create test data
     entries = [
-        JournalEntry(1, "Happy day", "happy", "personal", ["joy"], datetime.now(UTC)),
+        JournalEntry(1, "Happy day", "happy", "personal", ["joy"], datetime.now(timezone.utc)),
         JournalEntry(
             2,
             "Productive work",
             "focused",
             "work",
             ["productivity"],
-            datetime.now(UTC) - timedelta(days=1),
+            datetime.now(timezone.utc) - timedelta(days=1),
         ),
         JournalEntry(
             3,
@@ -60,7 +60,7 @@ def test_insights():
             "contemplative",
             "personal",
             ["reflection"],
-            datetime.now(UTC) - timedelta(days=2),
+            datetime.now(timezone.utc) - timedelta(days=2),
         ),
     ]
 

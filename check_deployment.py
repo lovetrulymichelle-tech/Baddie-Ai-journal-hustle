@@ -7,7 +7,7 @@ This script checks if all dependencies and configurations are ready for deployme
 
 import sys
 import os
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 
 
 def check_python_version():
@@ -158,7 +158,7 @@ def check_database_connection():
 def main():
     """Run all deployment checks."""
     print("🚀 Baddie AI Journal Hustle - Deployment Verification")
-    print(f"   Running at: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}")
+    print(f"   Running at: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}")
     print("=" * 60)
 
     checks = [

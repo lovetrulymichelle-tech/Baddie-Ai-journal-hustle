@@ -8,7 +8,7 @@ This module defines subscription-related data structures:
 """
 
 from dataclasses import dataclass
-from datetime import datetime, UTC, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any
 from enum import Enum
 
@@ -63,7 +63,7 @@ class SubscriptionPlan:
     def __post_init__(self):
         """Set creation timestamp if not provided."""
         if self.created_at is None:
-            self.created_at = datetime.now(UTC)
+            self.created_at = datetime.now(timezone.utc)
 
     @property
     def price_dollars(self) -> float:
@@ -115,7 +115,7 @@ class User:
     def __post_init__(self):
         """Set creation timestamp if not provided."""
         if self.created_at is None:
-            self.created_at = datetime.now(UTC)
+            self.created_at = datetime.now(timezone.utc)
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
@@ -169,7 +169,7 @@ class Subscription:
     def __post_init__(self):
         """Set creation timestamp and trial period if not provided."""
         if self.created_at is None:
-            self.created_at = datetime.now(UTC)
+            self.created_at = datetime.now(timezone.utc)
 
     @property
     def is_trial_active(self) -> bool:
@@ -180,7 +180,7 @@ class Subscription:
         if not self.trial_start or not self.trial_end:
             return False
 
-        now = datetime.now(UTC)
+        now = datetime.now(timezone.utc)
         return self.trial_start <= now <= self.trial_end
 
     @property
@@ -189,7 +189,7 @@ class Subscription:
         if not self.trial_end:
             return False
 
-        return datetime.now(UTC) > self.trial_end
+        return datetime.now(timezone.utc) > self.trial_end
 
     @property
     def days_until_trial_end(self) -> Optional[int]:
@@ -197,7 +197,7 @@ class Subscription:
         if not self.trial_end:
             return None
 
-        now = datetime.now(UTC)
+        now = datetime.now(timezone.utc)
         if now > self.trial_end:
             return 0
 
@@ -212,7 +212,7 @@ class Subscription:
 
     def start_trial(self, trial_days: int = 7) -> None:
         """Start trial period for specified number of days."""
-        now = datetime.now(UTC)
+        now = datetime.now(timezone.utc)
         self.trial_start = now
         self.trial_end = now + timedelta(days=trial_days)
         self.status = SubscriptionStatus.TRIAL
@@ -225,7 +225,7 @@ class Subscription:
             raise ValueError("Can only upgrade from trial status")
 
         self.status = SubscriptionStatus.ACTIVE
-        self.current_period_start = datetime.now(UTC)
+        self.current_period_start = datetime.now(timezone.utc)
         self.current_period_end = new_period_end
         self.cancel_at_period_end = False
 
@@ -235,7 +235,7 @@ class Subscription:
             self.cancel_at_period_end = True
         else:
             self.status = SubscriptionStatus.CANCELLED
-            self.cancelled_at = datetime.now(UTC)
+            self.cancelled_at = datetime.now(timezone.utc)
 
     def expire_subscription(self) -> None:
         """Mark subscription as expired."""

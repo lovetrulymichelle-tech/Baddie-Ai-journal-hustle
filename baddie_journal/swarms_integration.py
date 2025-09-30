@@ -7,7 +7,7 @@ of journal entries using multiple specialized agents for different insights.
 
 import os
 import json
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
 
@@ -466,5 +466,5 @@ Provide 5-10 specific, actionable recommendations in JSON format:
             recommendations=recommendations,
             emotional_trends=mood_analysis,  # Alias for backwards compatibility
             personal_growth_insights=growth_insights,
-            generated_at=datetime.now(UTC),
+            generated_at=datetime.now(timezone.utc),
         )

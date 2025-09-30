@@ -8,7 +8,7 @@ including trial periods, upgrades, and payment integration.
 
 import sys
 import os
-from datetime import datetime, UTC, timedelta
+from datetime import datetime, timedelta, timezone
 import logging
 
 # Configure logging for tests
@@ -87,7 +87,7 @@ def test_subscription_models():
     print("  ✅ Subscription trial functionality")
 
     # Test upgrade functionality
-    future_date = datetime.now(UTC) + timedelta(days=30)
+    future_date = datetime.now(timezone.utc) + timedelta(days=30)
     subscription.upgrade_from_trial(future_date)
     assert subscription.status == SubscriptionStatus.ACTIVE
     assert not subscription.is_trial_active
@@ -118,8 +118,8 @@ def test_notification_service():
     user = User(id="user123", email="test@example.com", name="Test User")
 
     # Test trial with 3 days left
-    trial_start = datetime.now(UTC) - timedelta(days=4)
-    trial_end = datetime.now(UTC) + timedelta(days=3)
+    trial_start = datetime.now(timezone.utc) - timedelta(days=4)
+    trial_end = datetime.now(timezone.utc) + timedelta(days=3)
     subscription = Subscription(
         id="sub123",
         user_id="user123",
@@ -137,13 +137,13 @@ def test_notification_service():
     print("  ✅ Trial expiring notification (3 days)")
 
     # Test trial with 1 day left
-    subscription.trial_end = datetime.now(UTC) + timedelta(days=1)
+    subscription.trial_end = datetime.now(timezone.utc) + timedelta(days=1)
     notification_type = service.should_send_trial_notification(subscription)
     assert notification_type == NotificationType.TRIAL_EXPIRING_1_DAY
     print("  ✅ Trial expiring notification (1 day)")
 
     # Test expired trial
-    subscription.trial_end = datetime.now(UTC) - timedelta(hours=1)
+    subscription.trial_end = datetime.now(timezone.utc) - timedelta(hours=1)
     notification_type = service.should_send_trial_notification(subscription)
     assert notification_type == NotificationType.TRIAL_EXPIRED
     print("  ✅ Trial expired notification")
@@ -213,7 +213,7 @@ def test_subscription_service():
     print("  ✅ Subscription access checking")
 
     # Test expired trial upgrade
-    subscription.trial_end = datetime.now(UTC) - timedelta(hours=1)
+    subscription.trial_end = datetime.now(timezone.utc) - timedelta(hours=1)
     access_info = service.check_subscription_access(subscription)
     assert access_info["needs_upgrade"]
 
@@ -302,7 +302,7 @@ def test_trial_workflow():
     print("  ✅ Step 2: Trial is active and accessible")
 
     # Step 3: Simulate trial expiration
-    subscription.trial_end = datetime.now(UTC) - timedelta(hours=1)
+    subscription.trial_end = datetime.now(timezone.utc) - timedelta(hours=1)
 
     access = service.check_subscription_access(subscription)
     assert access["needs_upgrade"]
