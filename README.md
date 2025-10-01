@@ -50,6 +50,100 @@ print("💡 Recommendations:", result.recommendations)
 
 ---
 
+## 🛍️ ThriftGenius - E-commerce Content Generator
+
+**NEW!** Baddie AI Journal Hustle now includes **ThriftGenius**, a powerful AI-driven content generator for high-end thrift e-commerce!
+
+### What is ThriftGenius?
+
+ThriftGenius (also known as ReStyle AI or CuratedThrift Pro) is a specialized tool designed to rapidly generate professional product content for online thrift stores. It uses AI agents to analyze products and create:
+
+- **Professional Product Titles**: SEO-optimized, compelling titles
+- **Short Descriptions**: Perfect for social media and quick views (2-3 sentences)
+- **Long Descriptions**: Comprehensive product page content with benefits and features
+- **Pricing Guidance**: Data-driven pricing recommendations based on market research
+- **Image Suggestions**: Recommendations for additional views and enhancements
+
+### AI Agent Specialists for Thrift
+
+Our thrift swarm includes four specialized agents:
+
+1. **🔍 Image & Feature Analyzer**: Analyzes product details, materials, condition, and quality
+2. **✍️ Description Generator**: Creates compelling, benefit-oriented product descriptions
+3. **💰 Pricing Specialist**: Provides market-based pricing recommendations
+4. **📸 Image Enhancement Advisor**: Suggests additional photos and improvements needed
+
+### Quick Start with ThriftGenius
+
+#### Web Interface (Easiest)
+```bash
+# Start the Flask application
+python app.py
+
+# Navigate to http://localhost:5000/thrift
+# Fill out the product form and generate content!
+```
+
+#### Python API
+```python
+from baddie_journal import ProductItem, ThriftContentSwarm
+import os
+
+# Set your OpenAI API key
+os.environ["OPENAI_API_KEY"] = "your-api-key-here"
+
+# Create a product item
+product = ProductItem(
+    id=1,
+    item_type="Vintage Leather Handbag",
+    brand="Coach",
+    condition="Excellent used",
+    key_features=["Genuine leather", "Multiple compartments"],
+    known_flaws=["Minor wear on corners"],
+    original_retail_price=298.00,
+    acquisition_cost=45.00,
+    user_description="Beautiful vintage Coach handbag"
+)
+
+# Initialize and run the swarm
+swarm = ThriftContentSwarm()
+result = swarm.perform_comprehensive_analysis(product)
+
+# Get generated content
+print("Title:", result.product_analysis.product_title)
+print("Short:", result.product_analysis.short_description)
+print("Long:", result.product_analysis.long_description)
+print("Price:", f"${result.pricing_guidance.recommended_price:.2f}")
+```
+
+### Demo and Testing
+- Run `python demo_thrift.py` for a complete demonstration
+- Access web interface at `/thrift` route when running Flask app
+- No API key? The interface will show basic product information
+
+### Features
+
+✅ **Smart Product Analysis**: AI analyzes your product details and images
+✅ **Professional Descriptions**: Generate both short (social) and long (detailed) descriptions
+✅ **SEO Optimization**: Automatic keyword extraction for better search visibility
+✅ **Market-Based Pricing**: Get pricing recommendations based on similar items
+✅ **Image Guidance**: Receive suggestions for additional photos and improvements
+✅ **Copy-Paste Ready**: Get formatted "Mini Product Page" for easy listing creation
+✅ **Profit Margin Calculator**: Automatic profit margin calculations when acquisition cost provided
+✅ **Condition Assessment**: Transparent condition evaluation and quality scoring
+
+### Supported Platforms
+
+ThriftGenius content works great for:
+- IONOS e-commerce sites
+- Facebook Marketplace & Shops
+- TikTok Shop
+- Poshmark, Mercari, eBay
+- Shopify, WooCommerce
+- Custom websites
+
+---
+
 ## Insights Feature
 
 The Insights feature provides analytics on your journal entries to help you track patterns, moods, and productivity over time. **Enhanced with Swarms AI for deeper analysis!**

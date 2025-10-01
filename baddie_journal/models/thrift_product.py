@@ -142,6 +142,10 @@ class ProductListing:
 
     def format_mini_page(self) -> str:
         """Format as a mini product page for easy copy-paste."""
+        # Helper to format optional prices
+        new_price = f"${self.pricing.new_price_equivalent:.2f}" if self.pricing.new_price_equivalent else "N/A"
+        used_price = f"${self.pricing.used_market_avg:.2f}" if self.pricing.used_market_avg else "N/A"
+        
         return f"""### Product Listing: {self.analysis.product_title}
 
 **Product Images:**
@@ -175,8 +179,8 @@ class ProductListing:
 
 **Detailed Pricing Guidance:**
 
-*   New Price Equivalent: ${self.pricing.new_price_equivalent:.2f if self.pricing.new_price_equivalent else 0:.2f}
-*   Used Market Assessment: ${self.pricing.used_market_avg:.2f if self.pricing.used_market_avg else 0:.2f}
+*   New Price Equivalent: {new_price}
+*   Used Market Assessment: {used_price}
 *   Recommended Price Range: ${self.pricing.price_range_min:.2f} - ${self.pricing.price_range_max:.2f}
 *   Why ${self.pricing.recommended_price:.2f}?: {self.pricing.pricing_rationale}
 """
