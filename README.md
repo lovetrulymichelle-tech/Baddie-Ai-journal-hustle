@@ -408,4 +408,18 @@ python migrate_sqlite_to_postgres.py
 
 ---
 
+## 🚀 Creating New Projects
+
+Want to create a new repository for a related project or use this as a template?
+
+See our comprehensive guide: **[CREATE_NEW_REPOSITORY_GUIDE.md](CREATE_NEW_REPOSITORY_GUIDE.md)**
+
+This guide covers:
+- Step-by-step repository creation on GitHub
+- Using this repository as a template
+- Best practices for naming and structuring projects
+- How to fork or clone for new projects
+
+---
+
 For questions, feedback, or to suggest new insights, open an issue or contact support.
