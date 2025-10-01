@@ -215,6 +215,113 @@ def health():
         )
 
 
+# Thrift E-commerce Content Generator Routes
+@app.route("/thrift")
+def thrift_home():
+    """Thrift product management home page."""
+    return render_template("thrift_index.html")
+
+
+@app.route("/thrift/analyze", methods=["POST"])
+def thrift_analyze():
+    """Analyze a thrift product and generate content."""
+    try:
+        from baddie_journal.models import ProductItem, ProductListing  # noqa: E402
+        from baddie_journal.thrift_swarms import ThriftContentSwarm  # noqa: E402
+
+        # Get form data
+        item_type = request.form.get("item_type", "").strip()
+        brand = request.form.get("brand", "").strip() or None
+        model = request.form.get("model", "").strip() or None
+        condition = request.form.get("condition", "Used").strip()
+        key_features = [
+            f.strip()
+            for f in request.form.get("key_features", "").split(",")
+            if f.strip()
+        ]
+        known_flaws = [
+            f.strip() for f in request.form.get("known_flaws", "").split(",") if f.strip()
+        ]
+        target_audience = request.form.get("target_audience", "").strip() or None
+        original_price = request.form.get("original_retail_price", "").strip()
+        acquisition_cost = request.form.get("acquisition_cost", "").strip()
+        user_description = request.form.get("user_description", "").strip() or None
+
+        if not item_type:
+            flash("Item type is required!", "error")
+            return redirect(url_for("thrift_home"))
+
+        # Create product item
+        product = ProductItem(
+            id=1,  # In production, use database ID
+            item_type=item_type,
+            brand=brand,
+            model=model,
+            condition=condition,
+            key_features=key_features,
+            known_flaws=known_flaws,
+            target_audience=target_audience,
+            original_retail_price=float(original_price) if original_price else None,
+            acquisition_cost=float(acquisition_cost) if acquisition_cost else None,
+            user_description=user_description,
+        )
+
+        # Check if AI analysis is available
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            flash("OpenAI API key not configured. Using basic template.", "warning")
+            # Return basic template without AI analysis
+            return render_template(
+                "thrift_result.html",
+                product=product,
+                analysis=None,
+                pricing=None,
+                ai_available=False,
+            )
+
+        # Perform AI analysis
+        try:
+            swarm = ThriftContentSwarm(api_key=api_key)
+            result = swarm.perform_comprehensive_analysis(product)
+
+            # Create product listing
+            listing = ProductListing(
+                product=product,
+                analysis=result.product_analysis,
+                pricing=result.pricing_guidance,
+            )
+
+            return render_template(
+                "thrift_result.html",
+                product=product,
+                analysis=result.product_analysis,
+                pricing=result.pricing_guidance,
+                image_suggestions=result.image_suggestions,
+                listing=listing,
+                ai_available=True,
+            )
+        except Exception as e:
+            flash(f"AI analysis failed: {str(e)}", "error")
+            return render_template(
+                "thrift_result.html",
+                product=product,
+                analysis=None,
+                pricing=None,
+                ai_available=False,
+            )
+
+    except ImportError:
+        flash(
+            "Thrift functionality requires additional packages. "
+            "Install with: pip install swarms openai",
+            "error",
+        )
+        return redirect(url_for("thrift_home"))
+    except Exception as e:
+        flash(f"Error analyzing product: {str(e)}", "error")
+        return redirect(url_for("thrift_home"))
+
+
 # Error handlers
 @app.errorhandler(404)
 def not_found(error):

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}ThriftGenius - Product Content Generator{% endblock %}
+
+{% block content %}
+<div class="container main-container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-center mb-2">
+                <i class="fas fa-store"></i> ThriftGenius
+            </h1>
+            <p class="text-center text-muted">
+                High-End Thrift E-commerce Content Generator
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card shadow-lg">
+                <div class="card-body p-4">
+                    <h3 class="card-title mb-3">
+                        <i class="fas fa-wand-magic-sparkles"></i> Generate Product Content
+                    </h3>
+                    <p class="text-muted mb-4">
+                        Enter your product details below, and our AI will generate professional descriptions, 
+                        pricing guidance, and image suggestions for your e-commerce listing.
+                    </p>
+
+                    <form method="POST" action="{{ url_for('thrift_analyze') }}" enctype="multipart/form-data">
+                        <!-- Item Type (Required) -->
+                        <div class="mb-3">
+                            <label for="item_type" class="form-label">
+                                <strong>Item Type</strong> <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="item_type" name="item_type" 
+                                   placeholder="e.g., Vintage Leather Handbag, Riding Mower, Utility Wagon" required>
+                            <small class="form-text text-muted">What type of item is this?</small>
+                        </div>
+
+                        <!-- Brand -->
+                        <div class="mb-3">
+                            <label for="brand" class="form-label"><strong>Brand</strong></label>
+                            <input type="text" class="form-control" id="brand" name="brand" 
+                                   placeholder="e.g., Coach, John Deere, Radio Flyer">
+                            <small class="form-text text-muted">Brand name if visible or known</small>
+                        </div>
+
+                        <!-- Model -->
+                        <div class="mb-3">
+                            <label for="model" class="form-label"><strong>Model</strong></label>
+                            <input type="text" class="form-control" id="model" name="model" 
+                                   placeholder="e.g., Classic Satchel, X350">
+                            <small class="form-text text-muted">Model number or name if known</small>
+                        </div>
+
+                        <!-- Condition -->
+                        <div class="mb-3">
+                            <label for="condition" class="form-label"><strong>Condition</strong></label>
+                            <select class="form-select" id="condition" name="condition">
+                                <option value="New with tags">New with tags</option>
+                                <option value="Excellent used" selected>Excellent used</option>
+                                <option value="Good used">Good used</option>
+                                <option value="Functional with cosmetic wear">Functional with cosmetic wear</option>
+                                <option value="For parts/repair">For parts/repair</option>
+                            </select>
+                        </div>
+
+                        <!-- Key Features -->
+                        <div class="mb-3">
+                            <label for="key_features" class="form-label"><strong>Key Features</strong></label>
+                            <input type="text" class="form-control" id="key_features" name="key_features" 
+                                   placeholder="e.g., Genuine leather, Multiple compartments, Adjustable strap">
+                            <small class="form-text text-muted">Comma-separated list of key features</small>
+                        </div>
+
+                        <!-- Known Flaws -->
+                        <div class="mb-3">
+                            <label for="known_flaws" class="form-label"><strong>Known Flaws</strong></label>
+                            <input type="text" class="form-control" id="known_flaws" name="known_flaws" 
+                                   placeholder="e.g., Minor wear on corners, Small stain on bottom">
+                            <small class="form-text text-muted">Comma-separated list of any issues or wear</small>
+                        </div>
+
+                        <!-- Target Audience -->
+                        <div class="mb-3">
+                            <label for="target_audience" class="form-label"><strong>Target Audience</strong></label>
+                            <input type="text" class="form-control" id="target_audience" name="target_audience" 
+                                   placeholder="e.g., Fashion-conscious professionals, Gardeners, Families">
+                            <small class="form-text text-muted">Who would be interested in this item?</small>
+                        </div>
+
+                        <!-- Pricing Information -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="original_retail_price" class="form-label"><strong>Original Retail Price</strong></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" step="0.01" class="form-control" 
+                                           id="original_retail_price" name="original_retail_price" 
+                                           placeholder="299.99">
+                                </div>
+                                <small class="form-text text-muted">New retail price if known</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="acquisition_cost" class="form-label"><strong>Your Acquisition Cost</strong></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" step="0.01" class="form-control" 
+                                           id="acquisition_cost" name="acquisition_cost" 
+                                           placeholder="45.00">
+                                </div>
+                                <small class="form-text text-muted">What you paid for the item</small>
+                            </div>
+                        </div>
+
+                        <!-- User Description -->
+                        <div class="mb-4">
+                            <label for="user_description" class="form-label"><strong>Additional Description</strong></label>
+                            <textarea class="form-control" id="user_description" name="user_description" 
+                                      rows="3" placeholder="Any additional details about the item..."></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-magic"></i> Generate Product Content
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card mt-4 border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info">
+                        <i class="fas fa-info-circle"></i> What We Generate
+                    </h5>
+                    <ul class="mb-0">
+                        <li><strong>Product Title:</strong> Professional, SEO-optimized title</li>
+                        <li><strong>Short Description:</strong> Perfect for social media and quick views</li>
+                        <li><strong>Long Description:</strong> Comprehensive product page content</li>
+                        <li><strong>Pricing Guidance:</strong> Data-driven pricing recommendations</li>
+                        <li><strong>Image Suggestions:</strong> What additional photos you need</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

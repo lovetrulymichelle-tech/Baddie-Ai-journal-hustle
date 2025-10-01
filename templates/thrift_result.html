@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Product Listing - ThriftGenius{% endblock %}
+
+{% block content %}
+<div class="container main-container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-center mb-2">
+                <i class="fas fa-check-circle text-success"></i> Product Listing Generated
+            </h1>
+            <p class="text-center">
+                <a href="{{ url_for('thrift_home') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-plus"></i> Create Another Product
+                </a>
+            </p>
+        </div>
+    </div>
+
+    {% if ai_available and analysis and pricing %}
+    <!-- AI-Generated Content -->
+    <div class="row">
+        <div class="col-lg-10 offset-lg-1">
+            <!-- Product Title -->
+            <div class="card mb-4 border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-tag"></i> Product Title</h4>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-primary">{{ analysis.product_title }}</h3>
+                    <button class="btn btn-sm btn-outline-secondary mt-2" onclick="copyToClipboard('{{ analysis.product_title }}')">
+                        <i class="fas fa-copy"></i> Copy Title
+                    </button>
+                </div>
+            </div>
+
+            <!-- Short Description -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-align-left"></i> Short Description (Social Media)</h5>
+                </div>
+                <div class="card-body">
+                    <p class="lead">{{ analysis.short_description }}</p>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="copyToClipboard('{{ analysis.short_description }}')">
+                        <i class="fas fa-copy"></i> Copy Short Description
+                    </button>
+                </div>
+            </div>
+
+            <!-- Long Description -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-file-alt"></i> Full Product Description</h5>
+                </div>
+                <div class="card-body">
+                    <div style="white-space: pre-line;">{{ analysis.long_description }}</div>
+                    <button class="btn btn-sm btn-outline-secondary mt-3" onclick="copyToClipboard(`{{ analysis.long_description }}`)">
+                        <i class="fas fa-copy"></i> Copy Long Description
+                    </button>
+                </div>
+            </div>
+
+            <!-- SEO Keywords -->
+            {% if analysis.seo_keywords %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-search"></i> SEO Keywords</h5>
+                </div>
+                <div class="card-body">
+                    {% for keyword in analysis.seo_keywords %}
+                        <span class="badge bg-secondary me-1 mb-1">{{ keyword }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Pricing Guidance -->
+            <div class="card mb-4 border-warning">
+                <div class="card-header bg-warning">
+                    <h4 class="mb-0"><i class="fas fa-dollar-sign"></i> Pricing Guidance</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-3">
+                        <div class="col-md-4">
+                            <h5 class="text-success">${{ "%.2f"|format(pricing.recommended_price) }}</h5>
+                            <small class="text-muted">Recommended Price</small>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>${{ "%.2f"|format(pricing.price_range_min) }} - ${{ "%.2f"|format(pricing.price_range_max) }}</h6>
+                            <small class="text-muted">Price Range</small>
+                        </div>
+                        <div class="col-md-4">
+                            {% if pricing.profit_margin %}
+                            <h6>{{ "%.1f"|format(pricing.profit_margin) }}%</h6>
+                            <small class="text-muted">Profit Margin</small>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if pricing.new_price_equivalent %}
+                    <p><strong>New Price Equivalent:</strong> ${{ "%.2f"|format(pricing.new_price_equivalent) }}</p>
+                    {% endif %}
+                    {% if pricing.used_market_avg %}
+                    <p><strong>Used Market Average:</strong> ${{ "%.2f"|format(pricing.used_market_avg) }}</p>
+                    {% endif %}
+
+                    <div class="alert alert-info mt-3">
+                        <strong>Why ${{ "%.2f"|format(pricing.recommended_price) }}?</strong><br>
+                        {{ pricing.pricing_rationale }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Suggestions -->
+            {% if image_suggestions %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-camera"></i> Image Enhancement Suggestions</h5>
+                </div>
+                <div class="card-body">
+                    {% if image_suggestions.additional_views_needed %}
+                    <h6>Additional Views Needed:</h6>
+                    <ul>
+                        {% for view in image_suggestions.additional_views_needed %}
+                        <li>{{ view }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+
+                    {% if image_suggestions.background_suggestion %}
+                    <p><strong>Background:</strong> {{ image_suggestions.background_suggestion }}</p>
+                    {% endif %}
+
+                    {% if image_suggestions.lighting_notes %}
+                    <p><strong>Lighting:</strong> {{ image_suggestions.lighting_notes }}</p>
+                    {% endif %}
+
+                    {% if image_suggestions.detail_shots %}
+                    <h6>Detail Shots to Capture:</h6>
+                    <ul>
+                        {% for detail in image_suggestions.detail_shots %}
+                        <li>{{ detail }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Mini Product Page -->
+            {% if listing %}
+            <div class="card mb-4 border-dark">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-clipboard"></i> Copy-Paste Ready Listing</h5>
+                </div>
+                <div class="card-body">
+                    <pre class="bg-light p-3" style="white-space: pre-wrap; max-height: 500px; overflow-y: auto;">{{ listing.format_mini_page() }}</pre>
+                    <button class="btn btn-primary mt-2" onclick="copyToClipboard(`{{ listing.format_mini_page() }}`)">
+                        <i class="fas fa-copy"></i> Copy Entire Listing
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Basic Template without AI -->
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="alert alert-warning">
+                <h5><i class="fas fa-exclamation-triangle"></i> AI Analysis Not Available</h5>
+                <p>OpenAI API key is not configured. Here's your basic product information:</p>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Product Information</h5>
+                </div>
+                <div class="card-body">
+                    <h4>{{ product.item_type }}</h4>
+                    {% if product.brand %}<p><strong>Brand:</strong> {{ product.brand }}</p>{% endif %}
+                    {% if product.model %}<p><strong>Model:</strong> {{ product.model }}</p>{% endif %}
+                    <p><strong>Condition:</strong> {{ product.condition }}</p>
+                    {% if product.key_features %}
+                    <p><strong>Features:</strong> {{ ', '.join(product.key_features) }}</p>
+                    {% endif %}
+                    {% if product.known_flaws %}
+                    <p><strong>Flaws:</strong> {{ ', '.join(product.known_flaws) }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <p><strong>To enable AI-powered content generation:</strong></p>
+                <ol>
+                    <li>Set the <code>OPENAI_API_KEY</code> environment variable</li>
+                    <li>Install dependencies: <code>pip install swarms openai</code></li>
+                    <li>Try generating content again</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function copyToClipboard(text) {
+    // Create a temporary textarea element
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    
+    try {
+        document.execCommand('copy');
+        alert('Copied to clipboard!');
+    } catch (err) {
+        console.error('Failed to copy:', err);
+        alert('Failed to copy to clipboard');
+    }
+    
+    document.body.removeChild(textarea);
+}
+</script>
+{% endblock %}
