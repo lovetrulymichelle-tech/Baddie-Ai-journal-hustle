@@ -31,10 +31,10 @@ from models.subscription import (  # noqa: E402
     DEFAULT_PLANS,
 )
 from services.subscription_service import SubscriptionService  # noqa: E402
-from services.notification_service import (
+from services.notification_service import (  # noqa: E402
     NotificationService,
     NotificationType,
-)  # noqa: E402
+)
 
 
 def test_subscription_models():

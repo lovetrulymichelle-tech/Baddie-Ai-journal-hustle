@@ -19,3 +19,6 @@ ignore =
     E501
 per-file-ignores =
     __init__.py:F401,F403
+    database.py:C901
+    demo.py:C901
+    migrate_sqlite_to_postgres.py:C901
