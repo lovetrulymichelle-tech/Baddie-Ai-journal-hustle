@@ -45,7 +45,9 @@ def test_insights():
 
     # Create test data
     entries = [
-        JournalEntry(1, "Happy day", "happy", "personal", ["joy"], datetime.now(timezone.utc)),
+        JournalEntry(
+            1, "Happy day", "happy", "personal", ["joy"], datetime.now(timezone.utc)
+        ),
         JournalEntry(
             2,
             "Productive work",

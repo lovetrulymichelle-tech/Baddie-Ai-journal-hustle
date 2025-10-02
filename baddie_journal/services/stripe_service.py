@@ -134,8 +134,12 @@ class StripeService:
                 "subscription_id": subscription.id,
                 "client_secret": subscription.latest_invoice.payment_intent.client_secret,
                 "status": subscription.status,
-                "trial_start": datetime.fromtimestamp(subscription.trial_start, tz=timezone.utc),
-                "trial_end": datetime.fromtimestamp(subscription.trial_end, tz=timezone.utc),
+                "trial_start": datetime.fromtimestamp(
+                    subscription.trial_start, tz=timezone.utc
+                ),
+                "trial_end": datetime.fromtimestamp(
+                    subscription.trial_end, tz=timezone.utc
+                ),
                 "current_period_start": datetime.fromtimestamp(
                     subscription.current_period_start, tz=timezone.utc
                 ),
@@ -187,7 +191,9 @@ class StripeService:
                 metadata={
                     "plan_id": new_plan.id,
                     "upgraded_from_trial": "true",
-                    "upgrade_timestamp": str(int(datetime.now(timezone.utc).timestamp())),
+                    "upgrade_timestamp": str(
+                        int(datetime.now(timezone.utc).timestamp())
+                    ),
                 },
             )
 
@@ -356,7 +362,9 @@ class StripeService:
             "event_type": "payment_succeeded",
             "subscription_id": subscription_id,
             "amount_paid": event_data.get("amount_paid", 0),
-            "timestamp": datetime.fromtimestamp(event_data.get("created", 0), tz=timezone.utc),
+            "timestamp": datetime.fromtimestamp(
+                event_data.get("created", 0), tz=timezone.utc
+            ),
         }
 
     def _handle_payment_failed(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -367,7 +375,9 @@ class StripeService:
             "event_type": "payment_failed",
             "subscription_id": subscription_id,
             "amount_due": event_data.get("amount_due", 0),
-            "timestamp": datetime.fromtimestamp(event_data.get("created", 0), tz=timezone.utc),
+            "timestamp": datetime.fromtimestamp(
+                event_data.get("created", 0), tz=timezone.utc
+            ),
         }
 
     def _handle_subscription_updated(
@@ -411,7 +421,9 @@ class StripeService:
             "event_type": "trial_will_end",
             "subscription_id": subscription_id,
             "trial_end": (
-                datetime.fromtimestamp(trial_end, tz=timezone.utc) if trial_end else None
+                datetime.fromtimestamp(trial_end, tz=timezone.utc)
+                if trial_end
+                else None
             ),
             "timestamp": datetime.now(timezone.utc),
         }
