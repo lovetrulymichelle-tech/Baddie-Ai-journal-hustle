@@ -2,6 +2,23 @@
 
 [![CI](https://github.com/lovetrulymichelle-tech/Baddie-Ai-journal-hustle/actions/workflows/ci.yml/badge.svg)](https://github.com/lovetrulymichelle-tech/Baddie-Ai-journal-hustle/actions/workflows/ci.yml)
 
+## 🔒 Security Notice
+
+**IMPORTANT**: This project uses API keys and sensitive credentials. Please read our [SECURITY.md](SECURITY.md) guide before setting up your environment.
+
+**Quick Security Tips**:
+- ✅ Use `.env` file for credentials (already in `.gitignore`)
+- ✅ Copy `.env.example` to `.env` and add your actual keys
+- ❌ NEVER commit `.env` to git
+- ❌ NEVER put API keys in comments or source code
+- 🔐 Format: `OPENAI_API_KEY=sk-your-key` (no spaces, no comments)
+
+**Need help setting up your API key?** → See [QUICKSTART_API_SETUP.md](QUICKSTART_API_SETUP.md)
+
+See [SECURITY.md](SECURITY.md) for complete guidelines.
+
+---
+
 ## 🆕 Swarms AI Integration
 
 Baddie AI Journal Hustle now features **Swarms AI integration** for advanced journal analysis using multiple specialized AI agents!
@@ -18,12 +35,24 @@ Our swarm includes four specialized agents:
 4. **💡 Recommendation Specialist**: Generates actionable recommendations for improvement
 
 ### Quick Start with Swarms
+
+**Step 1: Set up your environment** (See [SECURITY.md](SECURITY.md) for details)
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env and add your OpenAI API key
+# OPENAI_API_KEY=sk-your-actual-key-here
+```
+
+**Step 2: Use in your code**
 ```python
 from baddie_journal import JournalAnalysisSwarm, JournalEntry, InsightData
 import os
 
-# Set your OpenAI API key
-os.environ["OPENAI_API_KEY"] = "your-api-key-here"
+# API key is loaded from .env automatically
+# Or set it programmatically (not recommended for production):
+# os.environ["OPENAI_API_KEY"] = "your-api-key-here"
 
 # Create your journal data
 entries = [
