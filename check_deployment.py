@@ -158,7 +158,9 @@ def check_database_connection():
 def main():
     """Run all deployment checks."""
     print("🚀 Baddie AI Journal Hustle - Deployment Verification")
-    print(f"   Running at: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}")
+    print(
+        f"   Running at: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}"
+    )
     print("=" * 60)
 
     checks = [
