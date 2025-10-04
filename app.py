@@ -84,6 +84,12 @@ def home():
     return render_template("index.html", entries=recent_entries)
 
 
+@app.route("/landing")
+def landing():
+    """Landing page highlighting features, pricing, and trial offer."""
+    return render_template("landing.html")
+
+
 @app.route("/add_entry", methods=["POST"])
 def add_entry():
     """Add a new journal entry."""
