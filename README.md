@@ -140,67 +140,19 @@ print("💡 AI Recommendations:", result.recommendations)
 
 ---
 
-## 🐳 Docker Deployment
+## 🚀 Deployment
 
-You can containerize the application using Docker for consistent deployment across environments.
+**⚠️ IMPORTANT**: This application should only be deployed to **ONE platform at a time**. 
 
-### Building the Docker Image
+See [DEPLOYMENT_POLICY.md](DEPLOYMENT_POLICY.md) for important deployment guidelines.
 
-```bash
-# Build the Docker image
-docker build -t baddie-journal .
-
-# Run the container locally
-docker run -p 8000:8000 \
-  -e SECRET_KEY=your-secret-key \
-  -e FLASK_DEBUG=false \
-  -e SQLALCHEMY_DATABASE_URI=postgresql://user:pass@host:port/db \
-  baddie-journal
-```
-
-### Environment Variables for Docker
-
-Set these environment variables when running the container:
-
-- `SECRET_KEY`: A secure random string for session security
-- `FLASK_DEBUG`: Set to `false` for production
-- `SQLALCHEMY_DATABASE_URI`: Database connection string (PostgreSQL for production)
-- `PORT`: Port to bind (default: 8000)
-
-### Docker Compose Example
-
-```yaml
-version: '3.8'
-services:
-  app:
-    build: .
-    ports:
-      - "8000:8000"
-    environment:
-      - SECRET_KEY=your-secure-secret-key
-      - FLASK_DEBUG=false
-      - SQLALCHEMY_DATABASE_URI=postgresql://user:pass@host:port/db
-    depends_on:
-      - db
-  
-  db:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=journal
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
-```
-
-The application will be available at `http://localhost:8000`.
+For deployment instructions, see [DEPLOYMENT_SUCCESS.md](DEPLOYMENT_SUCCESS.md).
 
 ---
 
-## Deploy to Railway (Postgres)
+## Deploy to Railway (Single Platform Deployment)
+
+**⚠️ Important**: Only deploy to Railway. Do not deploy to multiple platforms simultaneously.
 
 This section provides step-by-step instructions for deploying the Baddie AI Journal to Railway with a PostgreSQL database.
 
